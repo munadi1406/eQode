@@ -1,4 +1,4 @@
-// File: /home/user/ecode/app/layout.js
+// File: /home/user/ecode/app/layout.jsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

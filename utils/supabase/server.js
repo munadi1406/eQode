@@ -1,17 +1,27 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-
-export function createClient() {
+import { getSession } from '@/app/auth'
+export async function createClient() {
+  const session = await getSession()
   const cookieStore = cookies()
+  const { supabaseAccessToken } = session
 
-  // Create a server's supabase client with newly configured cookie,
-  // which could be used to maintain user's session
+
+
   return createServerClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_ANON_KEY,
+
     {
+
+      global: {
+        headers: {
+          Authorization: `Bearer ${supabaseAccessToken}`,  // Menambahkan token ke header Authorization
+        },
+      },
       cookies: {
         getAll() {
+          console.log(cookieStore.getAll())
           return cookieStore.getAll()
         },
         setAll(cookiesToSet) {
@@ -20,12 +30,11 @@ export function createClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+
           }
         },
       },
     }
   )
 }
+
