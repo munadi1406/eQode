@@ -26,7 +26,7 @@ const Form = () => {
 
     const { mutate } = useMutation({
         mutationFn: async (e) => {
-            console.log("running")
+           
             e.preventDefault()
             const data = await axios.post('/api/qrcode', {
                 tujuan,

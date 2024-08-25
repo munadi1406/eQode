@@ -1,3 +1,4 @@
+import { getSession } from "@/app/auth"
 import { createClient } from "@/utils/supabase/server"
 
 export async function POST(request) {
@@ -17,17 +18,32 @@ export async function POST(request) {
         return new Response(JSON.stringify({ error: error.message }), { status: 500 })
     }
 
-    console.log("Insert success:", insertData)
+    
     return new Response(JSON.stringify({ data: insertData }), { status: 200 })
 }
 export async function GET() {
     const supabase = await createClient()
-    
 
-  
+    const { user } = await getSession()
 
-    const { data, error } = await supabase.from('qrcode').select().order('created_at',{ascending:false});
 
-  
+
+    const { data, error } = await supabase.from('qrcode').select().order('created_at', { ascending: false }).eq('id_user', user.id);
+
+
     return new Response(JSON.stringify({ data }), { status: 200 })
+}
+export async function DELETE(request) {
+    const supabase = await createClient()
+    const searchParams = request.nextUrl.searchParams
+    const id = searchParams.get('id')
+
+    const { user } = await getSession()
+
+
+
+    const { data, error } = await supabase.from('qrcode').delete().eq('id_user', user.id).eq('id', id);
+
+
+    return new Response(JSON.stringify({ message: "Tanda Tangan Berhasil Dihapus" }), { status: 200 })
 }

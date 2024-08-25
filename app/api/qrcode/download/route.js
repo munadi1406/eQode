@@ -7,12 +7,17 @@ export async function GET(request) {
 
         const searchParams = request.nextUrl.searchParams
         const id = searchParams.get('id')
-        
-        
-        const verifyUrl = `${process.env.NEXTAUTH_URL}v/${id}`;
-        console.log(verifyUrl)
 
-        const qrBuffer = await QRCode.toBuffer(verifyUrl, { type: 'png' });
+
+        const verifyUrl = `${process.env.NEXTAUTH_URL}v/${id}`;
+       
+
+        const qrBuffer = await QRCode.toBuffer(verifyUrl, {
+            type: 'png', color: {
+                dark: '#000000',  // Warna untuk titik QR (default hitam)
+                light: '#0000'    // Warna untuk latar belakang (transparan)
+            }
+        });
 
         // Kembalikan response dengan QR code sebagai file gambar PNG
         return new Response(qrBuffer, {
@@ -24,6 +29,6 @@ export async function GET(request) {
             },
         });
     } catch (error) {
-        console.log(error)
+       
     }
 }
