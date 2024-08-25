@@ -11,83 +11,10 @@ import { useQRCode } from 'next-qrcode';
 import { useRef, Fragment,forwardRef,useEffect ,useCallback} from 'react';
 import { Button } from "@/components/ui/button";
 
-const CanvasWrapper = ({ text, options, canvasRef }) => {
-    const { Canvas } = useQRCode();
-    const localRef = useRef(null);
-    console.log({canvasRef})
-
-    useEffect(() => {
-        if (canvasRef) {
-            canvasRef(localRef.current); // Menyebarkan referensi ke parent component
-        }
-    }, [canvasRef]);
-
-    return (
-        <Canvas
-            text={text}
-            options={options}
-            ref={localRef}
-        />
-    );
-};
-
-const QrCode = ({ text, options }) => {
-    const { Canvas } = useQRCode();
-    const canvasRef = useRef(null);
-
-    // Callback ref to capture the canvas DOM element
-    const handleRef = useCallback((node) => {
-        if (node) {
-            canvasRef.current = node; // Capture the DOM element
-        } 
-    }, []);
-
-    const handleShare = async () => {
-        if (!canvasRef.current) return;
-
-        // Convert canvas to Blob
-        canvasRef.current.toBlob(async (blob) => {
-            if (!blob) {
-                console.error('Failed to convert canvas to blob.');
-                return;
-            }
-
-            const filesArray = [
-                new File([blob], 'qrcode.png', {
-                    type: 'image/png',
-                    lastModified: new Date().getTime(),
-                }),
-            ];
-
-            const shareData = {
-                files: filesArray,
-                title: 'QR Code',
-                text: `QR Code for ${text}`,
-            };
-
-            try {
-                await navigator.share(shareData);
-                console.log('Share successful');
-            } catch (error) {
-                console.error('Error sharing:', error);
-            }
-        }, 'image/png');
-    };
-
-    return (
-        <div>
-            <Canvas
-                text={text}
-                options={options}
-                ref={handleRef} // Use callback ref
-            />
-            <button onClick={handleShare}>Share QR Code</button>
-        </div>
-    );
-};
 
 const Data = () => {
-    
+
+    const {Image} = useQRCode()
     const { data, isLoading } = useQuery({
         queryKey: ['data'], queryFn: async () => {
             const datas = await axios.get('/api/qrcode')
@@ -97,39 +24,18 @@ const Data = () => {
 
     const canvasRefs = useRef([]);
 
-    const handleShare = async (index) => {
-        const canvas = canvasRefs.current[index];
-        console.log(canvas)
-        if (!canvas) return;
-
-        // Konversi canvas ke Blob
-        canvas.toBlob(async (blob) => {
-            if (!blob) {
-                console.error('Failed to convert canvas to blob.');
-                return;
-            }
-
-            const filesArray = [
-                new File([blob], 'qrcode.png', {
-                    type: 'image/png',
-                    lastModified: new Date().getTime(),
-                }),
-            ];
-
-            const shareData = {
-                files: filesArray,
-                title: 'QR Code',
-                text: `QR Code for ${data[index].tujuan} - ${data[index].keperluan}`,
-            };
-
-            try {
-                await navigator.share(shareData);
-                console.log('Share successful');
-            } catch (error) {
-                console.error('Error sharing:', error);
-            }
-        }, 'image/png');
+    const handleClick = async (id) => {
+        try {
+            // Membangun URL API
+            const url = `/api/qrcode/download?id=${id}`;
+            
+            // Membuka URL API di tab baru
+            window.open(url, '_blank');
+        } catch (error) {
+            console.error('Error opening the QR code URL:', error);
+        }
     };
+    
     if (isLoading) {
         return <>Loading...</>
     }
@@ -148,13 +54,13 @@ const Data = () => {
 
                             <div className="bg-white shadow-md w-max m-auto rounded-md ">
                                 
-                                    <QrCode
+                                    <Image
                                         text={'https://github.com/bunlong/next-qrcode'}
                                         options={{
                                             scale: 2,
                                             width: 150,
                                         }}
-                                        ref={(el) => (canvasRefs.current[index] = el)}
+                                       
                                     /> 
                                 
                             </div>
@@ -162,7 +68,7 @@ const Data = () => {
                         <div className="flex justify-center mt-4">
                             <Button
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={() => handleShare(index)}
+                                onClick={() => handleClick(e.id)}
                             >
                                 Share QR Code
                             </Button>
