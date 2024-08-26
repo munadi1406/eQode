@@ -6,6 +6,10 @@ const nextConfig = {
         source: '/v/:id*',
         destination: '/verify/:id*',
       },
+      {
+        source: '/dashboard/:sekolah*',
+        destination: '/dashboard/raport/:sekolah*',
+      },
     ]
 
     

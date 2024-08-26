@@ -1,6 +1,6 @@
 
-import Data from "@/components/dashboard/qrcode/Data"
-import Form from "@/components/dashboard/qrcode/Form"
+import Data from "@/components/dashboard/sekolah/Data"
+import Form from "@/components/dashboard/sekolah/Form"
 
 
 
