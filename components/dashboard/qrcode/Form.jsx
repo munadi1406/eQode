@@ -18,25 +18,25 @@ import { useSession } from "next-auth/react"
 import { useState } from "react"
 
 const Form = () => {
-    const {data:{user:{id}}} = useSession()
-   const [open,setOpen] = useState(false);
-    
+    const { data: { user: { id } } } = useSession()
+    const [open, setOpen] = useState(false);
+
     const [tujuan, setTujuan] = useState()
     const [keperluan, setKepeluan] = useState()
 
     const { mutate } = useMutation({
         mutationFn: async (e) => {
-           
+
             e.preventDefault()
             const data = await axios.post('/api/qrcode', {
                 tujuan,
                 keperluan,
-                idUser:id
-                
+                idUser: id
+
             })
             return data
         },
-        onSuccess:()=>{
+        onSuccess: () => {
             setOpen(false);
         }
     })
@@ -44,36 +44,36 @@ const Form = () => {
 
 
     return (
-        
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild className="flex justify-end items-end w-full">
-                    <div>
-                        <Button onClick={()=>setOpen(true)} type="button" className="bg-blue-600 hover:bg-blue-400 w-max">Buat Tanda Tangan</Button>
-                    </div>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Buat Tanda Tangan</DialogTitle>
-                        <DialogDescription>
-                            Silakan Isi Form Dibawah Ini Untuk Membuat Tanda Tangan
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={mutate} className="grid grid-cols-1 gap-2">
-                        <div>
-                            <Label htmlFor="tujuan">Tujuan/Orang Yang Menerima</Label>
-                            <Input type="text" placeholder="Masukkan Tujuan" id="tujuan" required onChange={(e) => setTujuan(e.target.value)} />
-                        </div>
-                        <div>
-                            <Label htmlFor="keperluan">Keperluan</Label>
-                            <Textarea id="keperluan" placeholder="Masukkan keperluan" required onChange={(e) => setKepeluan(e.target.value)} />
-                        </div>
-                    <Button type="submit">Simpan</Button>
-                    </form>
-                    
-                </DialogContent>
-            </Dialog>
 
-     
+        <Dialog open={open} onOpenChange={setOpen}>
+            <div className="w-full flex justify-end ">
+                <DialogTrigger asChild>
+                    <Button onClick={() => setOpen(true)} type="button" className="bg-blue-600 hover:bg-blue-400 w-max">Buat Tanda Tangan</Button>
+                </DialogTrigger>
+            </div>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Buat Tanda Tangan</DialogTitle>
+                    <DialogDescription>
+                        Silakan Isi Form Dibawah Ini Untuk Membuat Tanda Tangan
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={mutate} className="grid grid-cols-1 gap-2">
+                    <div>
+                        <Label htmlFor="tujuan">Tujuan/Orang Yang Menerima</Label>
+                        <Input type="text" placeholder="Masukkan Tujuan" id="tujuan" required onChange={(e) => setTujuan(e.target.value)} />
+                    </div>
+                    <div>
+                        <Label htmlFor="keperluan">Keperluan</Label>
+                        <Textarea id="keperluan" placeholder="Masukkan keperluan" required onChange={(e) => setKepeluan(e.target.value)} />
+                    </div>
+                    <Button type="submit">Simpan</Button>
+                </form>
+
+            </DialogContent>
+        </Dialog>
+
+
     )
 }
 
