@@ -3,14 +3,14 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/v/:id*',
-        destination: '/verify/:id*',
+        source: '/v/:id*/:hash*',
+        destination: '/verify/:id*/:hash*',
       },
       {
         source: '/dashboard/:sekolah*',
         destination: '/dashboard/raport/:sekolah*',
       },
-    ]
+    ] 
 
     
   },

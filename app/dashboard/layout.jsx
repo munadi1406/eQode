@@ -1,4 +1,3 @@
-
 import Link from "next/link"
 import {
   Home,
@@ -8,13 +7,9 @@ import {
   Search,
   Settings,
 } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
-
-
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-
 import {
   Tooltip,
   TooltipContent,
@@ -24,9 +19,16 @@ import {
 
 import NavbarProfile from "@/components/dashboard/NavbarProfile"
 import DynamicBreadcrumb from "@/components/dashboard/DynamicBreadcrumb"
-export default function Layout({ children }) {
-  
-  
+import { getSession } from "../auth"
+import { createClient } from "@/utils/supabase/server"
+import CompleteProfileData from "@/components/dashboard/profile/CompleteProfileData"
+
+export default async function Layout({ children }) {
+  const session = await getSession()
+  const supabase = await createClient()
+
+  const { data } = await supabase.from('detail_user').select('id').eq('id', session.user.id).single()
+
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -53,14 +55,14 @@ export default function Layout({ children }) {
               <TooltipContent side="right">Dashboard</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-         
-        
-        
+
+
+
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link 
-                  href="/dashboard/raport" 
+                <Link
+                  href="/dashboard/raport"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <LineChart className="h-5 w-5" />
@@ -113,20 +115,20 @@ export default function Layout({ children }) {
                   <Home className="h-5 w-5" />
                   Dashboard
                 </Link>
-               
-                
-               
+
+
+
                 <Link
-                  href="#"
+                  href="/dashboard/raport"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <LineChart className="h-5 w-5" />
-                  Settings
+                  Raport
                 </Link>
               </nav>
             </SheetContent>
           </Sheet>
-         <DynamicBreadcrumb/>
+          <DynamicBreadcrumb />
           <div className="relative ml-auto flex-1 md:grow-0">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -135,14 +137,22 @@ export default function Layout({ children }) {
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
           </div>
-          <NavbarProfile/>
+          <NavbarProfile />
         </header>
         <main className="p-2">
           <div className="w-full bg-white rounded-md p-2 shadow-md">
-          {children}
+            {data ? 
+              <>
+              { children }
+              </>
+             : (
+              <div>
+                <CompleteProfileData />
+              </div>
+            )}
           </div>
         </main>
       </div>
-    </div> 
-  )  
+    </div>
+  )
 }

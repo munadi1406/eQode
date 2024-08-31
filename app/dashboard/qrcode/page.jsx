@@ -1,8 +1,8 @@
 
-import Data from '@/components/dashboard/sekolah/Data';
-import Form from '@/components/dashboard/sekolah/Form';
+import Data from '@/components/dashboard/qrcode/Data';
+import Form from '@/components/dashboard/qrcode/Form';
 export const metadata = {
-  title: "Raport",
+  title: "QR CODE",
 };
 
 export default function SchoolForm() {
