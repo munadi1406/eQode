@@ -13,6 +13,11 @@ export default function QRCodeDetails({ data }) {
               <td className="px-6 py-4 whitespace-nowrap text-gray-900">{data.users.detail_user.full_name}</td>
             </tr>
             <tr>
+              <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">NIP</td>
+              <td>:</td>
+              <td className="px-6 py-4 whitespace-nowrap text-gray-900">{data.users.detail_user.nip}</td>
+            </tr>
+            <tr>
               <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">Tujuan</td>
               <td>:</td>
               <td className="px-6 py-4 whitespace-nowrap text-gray-900">{data.tujuan}</td>

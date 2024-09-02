@@ -58,7 +58,7 @@ export default async function Layout({ children }) {
 
 
 
-          <TooltipProvider>
+          {/* <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
@@ -71,9 +71,9 @@ export default async function Layout({ children }) {
               </TooltipTrigger>
               <TooltipContent side="right">Analytics</TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </TooltipProvider> */}
         </nav>
-        <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+        {/* <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -88,7 +88,7 @@ export default async function Layout({ children }) {
               <TooltipContent side="right">Settings</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </nav>
+        </nav> */}
       </aside>
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -118,13 +118,13 @@ export default async function Layout({ children }) {
 
 
 
-                <Link
+                {/* <Link
                   href="/dashboard/raport"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <LineChart className="h-5 w-5" />
                   Raport
-                </Link>
+                </Link> */}
               </nav>
             </SheetContent>
           </Sheet>

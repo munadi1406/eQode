@@ -1,7 +1,7 @@
 export async function fetchQRCodeData(supabase, id) {
     const { data, error } = await supabase
         .from('qrcode')
-        .select(`id, keperluan, created_at, tujuan, hash, users(detail_user(full_name))`)
+        .select(`id, keperluan, created_at, tujuan, hash, users(detail_user(full_name,nip))`)
         .eq('id', id)
         .single();
 
