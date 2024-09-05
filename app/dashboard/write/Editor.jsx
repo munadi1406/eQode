@@ -20,8 +20,10 @@ import { slashCommand, suggestionItems } from "./slash-command";
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
 import { uploadFn } from "./image-upload";
 import { Separator } from "@/components/ui/separator";
+import { detectImageDeletion } from "@/utils/convertUrl";
 
 const extensions = [...defaultExtensions, slashCommand];
+
 
 
 const Editor = ({ initialValue, onChange }) => {
@@ -33,7 +35,7 @@ const Editor = ({ initialValue, onChange }) => {
     <EditorRoot >
       <EditorContent
         immediatelyRender={false}
-        className="border p-4 rounded-xl"
+        className="p-4"
         {...(initialValue && { initialContent: initialValue })}
         extensions={extensions}
         editorProps={{
@@ -43,12 +45,14 @@ const Editor = ({ initialValue, onChange }) => {
           handlePaste: (view, event) => handleImagePaste(view, event, uploadFn),
           handleDrop: (view, event, _slice, moved) =>
             handleImageDrop(view, event, moved, uploadFn),
+        
           attributes: {
             class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
           },
         }}
         onUpdate={({ editor }) => {
           onChange(editor.getJSON());
+          detectImageDeletion(editor.getJSON());
         }}
         slotAfter={<ImageResizer />}
       >

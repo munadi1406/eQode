@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react'
 import Editor from './Editor'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
+import { Textarea } from '@/components/ui/textarea'
+import { useRouter } from 'next/navigation'
 
 
 const page = () => {
@@ -21,89 +22,11 @@ const page = () => {
           },
         ],
       },
-      {
-        type: "heading",
-        attrs: {
-          level: 1,
-        },
-        content: [
-          {
-            type: "text",
-            text: "H1",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: {
-          level: 2,
-        },
-        content: [
-          {
-            type: "text",
-            text: "H2",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: {
-          level: 3,
-        },
-        content: [
-          {
-            type: "text",
-            text: "H3",
-          },
-        ],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "text",
-          },
-        ],
-      },
-      {
-        type: "bulletList",
-        attrs: {
-          tight: true,
-        },
-        content: [
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    text: "new idea",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    text: "idea",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
     ],
   })
+
+
+  const navigate = useRouter()
 
   const [title, setTitle] = useState("")
   const { isPending, mutate } = useMutation({
@@ -113,11 +36,8 @@ const page = () => {
       })
       return datas.data
     },
-    onError: (error) => {
-      console.log(error)
-    },
-    onSuccess: (data) => {
-      console.log(data)
+    onSuccess: () => {
+      navigate.push('/dashboard/story')
     }
   },
   )
@@ -130,9 +50,9 @@ const page = () => {
   return (
     <div className='flex flex-col gap-2'>
       <Button onClick={mutate} disabled={isPending}>Publish</Button>
-      <Input type="text" placeholder={"Title"} onChange={(e) => setTitle(e.target.value)} value={title} />
+      <Textarea type="text" className="border-none text-3xl font-semibold active:border-none focus:border-none" placeholder={"Title"} onChange={(e) => setTitle(e.target.value)} value={title} />
       <Editor initialValue={value} onChange={setValue} />
-    </div>
+    </div> 
   )
 }
 

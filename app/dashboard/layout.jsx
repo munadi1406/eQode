@@ -1,11 +1,10 @@
 import Link from "next/link"
 import {
   Home,
-  LineChart,
   Package2,
   PanelLeft,
   Search,
-  Settings,
+
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,6 +21,10 @@ import DynamicBreadcrumb from "@/components/dashboard/DynamicBreadcrumb"
 import { getSession } from "../auth"
 import { createClient } from "@/utils/supabase/server"
 import CompleteProfileData from "@/components/dashboard/profile/CompleteProfileData"
+import { BsPencilSquare } from "react-icons/bs";
+
+import { Toaster } from "@/components/ui/sonner"
+
 
 export default async function Layout({ children }) {
   const session = await getSession()
@@ -65,11 +68,11 @@ export default async function Layout({ children }) {
                   href="/dashboard/write"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
-                  <LineChart className="h-5 w-5" />
-                  <span className="sr-only">Raport</span>
+                  <BsPencilSquare className="h-5 w-5" />
+                  <span className="sr-only">Write</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">Analytics</TooltipContent>
+              <TooltipContent side="right">Write</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </nav>
@@ -141,16 +144,17 @@ export default async function Layout({ children }) {
         </header>
         <main className="p-2">
           <div className="w-full bg-white rounded-md p-2 shadow-md">
-            {data ? 
+            {data ?
               <>
-              { children }
+                {children}
               </>
-             : (
-              <div>
-                <CompleteProfileData />
-              </div>
-            )}
+              : (
+                <div>
+                  <CompleteProfileData />
+                </div>
+              )}
           </div>
+          <Toaster />
         </main>
       </div>
     </div>

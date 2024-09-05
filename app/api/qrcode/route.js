@@ -5,7 +5,7 @@ import CryptoJS from 'crypto-js';
 export async function POST(request) {
     const supabase = await createClient();
     const { tujuan, keperluan, idUser } = await request.json();
-    
+
 
     // Data yang akan disimpan
     const data = {

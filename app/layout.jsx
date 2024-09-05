@@ -12,7 +12,6 @@ export const metadata = {
   title: "Buat Tanda Tangan dengan QR Code | Aplikasi Tanda Tangan Digital",
   description: "Buat tanda tangan digital Anda dengan mudah menggunakan aplikasi kami. Hasilkan QR code yang aman dan terverifikasi untuk dokumen penting Anda.",
   keywords: "tanda tangan digital, QR code, aplikasi tanda tangan, tanda tangan online, verifikasi dokumen, tanda tangan QR code",
-  
   openGraph: {
     title: "Buat Tanda Tangan dengan QR Code | Aplikasi Tanda Tangan Digital",
     description: "Gunakan aplikasi kami untuk membuat tanda tangan digital dengan QR code. Aman, cepat, dan mudah untuk semua kebutuhan verifikasi dokumen Anda.",

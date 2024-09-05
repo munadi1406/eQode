@@ -10,6 +10,7 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { signOut, useSession } from "next-auth/react"
 import { Button } from "../ui/button"
+import Link from "next/link"
 
 const NavbarProfile = () => {
     const {data:{user}} = useSession()
@@ -35,6 +36,7 @@ const NavbarProfile = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel><Link href={"/dashboard/story"}>Story</Link></DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>Logout</DropdownMenuItem>
             </DropdownMenuContent>

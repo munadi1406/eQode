@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 
 import { getSession } from "@/app/auth"
+import { convertTitleToSlug } from "@/utils/convertUrl";
 
 
 export async function POST(request) {
@@ -9,10 +10,11 @@ export async function POST(request) {
     const { user } = await getSession()
     
 
-    // Data yang akan disimpan
+    const slug = convertTitleToSlug(title)
     const data = {
         content,
         title,
+        slug,
         id_user: user.id
     };
 

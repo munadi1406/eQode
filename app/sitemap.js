@@ -18,7 +18,7 @@ export default async function sitemap() {
       priority: 1,
     },
     ...(await getData()).map((o) => ({
-      url: `${url}${o.detail_user.slug}/${o.title}`,
+      url: `${url}${o.detail_user.slug}/${o.slug}`,
       lastModified: o.created_at,
       priority: 0.8,
     })),
