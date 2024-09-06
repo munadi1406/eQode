@@ -1,16 +1,19 @@
-import Editor from '@/app/(dashboard)/dashboard/write/Editor'
-import { createClient } from '@/utils/supabase/client'
-import React from 'react'
-import View from './view'
-import Image from 'next/image'
-
+import Editor from '@/app/(dashboard)/dashboard/write/Editor';
+import { createClient } from '@/utils/supabase/client';
+import React from 'react';
+import View from './view';
+import Image from 'next/image';
 
 const getData = async (username, title) => {
-
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('articles').select(`*,detail_user!inner(slug,users(name,image,email))`).eq('slug', title).eq('detail_user.slug', username).single()
-  return data
-}
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('articles')
+    .select(`*,detail_user!inner(slug,users(name,image,email))`)
+    .eq('slug', title)
+    .eq('detail_user.slug', username)
+    .single();
+  return data;
+};
 
 export async function generateMetadata({ params }) {
   const data = await getData(params.username, params.title);
@@ -27,7 +30,7 @@ export async function generateMetadata({ params }) {
         card: 'summary_large_image',
         title: 'Article Not Found',
         description: 'Article not found on the site',
-        image: `${process.env.NEXTAUTH_URL}/404-image.jpg`, // Gambar default atau logo
+        image: `${process.env.NEXTAUTH_URL}/404-image.jpg`,
       },
     };
   }
@@ -42,21 +45,20 @@ export async function generateMetadata({ params }) {
     const paragraphs = contentJson.content
       .filter(item => item.type === 'paragraph')
       .map(paragraph => paragraph.content.map(text => text.text).join(''))
-      .slice(0, 2) // Ambil dua paragraf pertama
+      .slice(0, 2)
       .join(' ');
 
     // Membersihkan dan memotong teks untuk SEO
     description = paragraphs
-      .replace(/\s+/g, ' ') // Hapus spasi berlebih
-      .trim() // Hapus spasi di awal dan akhir
-      .slice(0, 160) // Ambil 160 karakter pertama
-      .trim(); // Pastikan tidak ada spasi berlebih di akhir
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 160)
+      .trim();
 
-    // Memastikan deskripsi tidak terpotong di tengah kata
     if (description.length === 160) {
       const lastSpace = description.lastIndexOf(' ');
       if (lastSpace > 0) {
-        description = description.slice(0, lastSpace); // Potong di spasi terakhir
+        description = description.slice(0, lastSpace);
       }
     }
 
@@ -64,8 +66,7 @@ export async function generateMetadata({ params }) {
     const images = contentJson.content
       .filter(item => item.type === 'image')
       .map(image => image.attrs.src);
-      
-    // Gunakan gambar pertama sebagai URL gambar utama
+
     if (images.length > 0) {
       imageUrl = images[0];
     }
@@ -74,26 +75,28 @@ export async function generateMetadata({ params }) {
     console.error('Error processing content:', error);
   }
 
+  const canonicalUrl = `${process.env.NEXTAUTH_URL}/${data.detail_user.slug}/${data.slug}`;
+
   return {
     title: data.title,
-    description: description || 'No description available', // Tambahkan deskripsi
+    description: description || 'No description available',
     openGraph: {
       title: data.title,
       description: description || 'No description available',
-      url: `${process.env.NEXTAUTH_URL}${data.detail_user.slug}/${data.slug}`,
-      type: 'article', // Type yang lebih sesuai untuk artikel
+      url: canonicalUrl,
+      type: 'article',
       article: {
-        author: data.detail_user.users.name, // Penulis artikel
-        publishedTime: data.created_at || new Date().toISOString(), // Waktu publikasi
-        modifiedTime: data.updated_at || new Date().toISOString(), // Waktu modifikasi
+        author: data.detail_user.users.name,
+        publishedTime: data.created_at || new Date().toISOString(),
+        modifiedTime: data.updated_at || new Date().toISOString(),
       },
-      images: [imageUrl], // Tambahkan URL gambar
+      images: [imageUrl],
     },
     twitter: {
-      card: imageUrl ? 'summary_large_image' : 'summary', // Gunakan gambar besar jika ada
+      card: imageUrl ? 'summary_large_image' : 'summary',
       title: data.title,
       description: description || 'No description available',
-      image: imageUrl || `${process.env.NEXTAUTH_URL}/default-twitter-image.jpg`, // Gambar default jika tidak ada
+      image: imageUrl || `${process.env.NEXTAUTH_URL}/default-twitter-image.jpg`,
     },
     authors: [{ name: data.detail_user.users.name }],
     creator: data.detail_user.users.name,
@@ -106,24 +109,43 @@ export async function generateMetadata({ params }) {
         me: [data.detail_user.users.email],
       },
     },
-    // Tambahkan meta tags untuk SEO tambahan
     metaTags: [
       { name: 'robots', content: 'index, follow' },
       { name: 'author', content: data.detail_user.users.name },
     ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
   };
 }
 
-
-
-const page = async ({ params }) => {
-
-
-  const data = await getData(params.username, params.title)
-
+const Page = async ({ params }) => {
+  const data = await getData(params.username, params.title);
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    name: data.title,
+    image: data.content.content
+      .filter(item => item.type === 'image')
+      .map(image => image.attrs.src)[0] || '',
+    description: data.content.content
+      .filter(item => item.type === 'paragraph')
+      .map(paragraph => paragraph.content.map(text => text.text).join(''))
+      .slice(0, 2)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 160),
+    author: {
+      '@type': 'Person',
+      name: data.detail_user.users.name,
+    },
+    datePublished: data.created_at,
+    dateModified: data.updated_at,
+  };
 
   return (
-    <div className="p-4 md:p-6 flex w-full justify-center">
+    <section className="p-4 md:p-6 flex w-full justify-center">
       <div className="w-full max-w-4xl">
         <h1 className="text-4xl md:text-3xl font-semibold mb-4">{data.title}</h1>
         <div className='flex gap-2 py-4'>
@@ -142,10 +164,14 @@ const page = async ({ params }) => {
           </div>
         </div>
         <View initialValue={data.content} />
+        {/* Add JSON-LD to your page */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </div>
-    </div>
+    </section>
+  );
+};
 
-  )
-}
-
-export default page
+export default Page;

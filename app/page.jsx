@@ -1,63 +1,62 @@
-'use client'
-
-import LocalTime from "@/components/dashboard/qrcode/LocalTime";
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import LocalTime from "@/components/dashboard/qrcode/LocalTime";
+import { createClient } from "@/utils/supabase/server";
 
+export const metadata = {
+  metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en-US': '/en-US',
+      'de-DE': '/de-DE',
+    },
+  },
+};
 
+export default async function Home() {
+  const supabase = await  createClient()
+  const { data, error } = await supabase.from('articles').select(`*,detail_user(slug,users(name,image))`).order('created_at', { ascending: false });
 
-
-export default function Home() {
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['posts'], queryFn: async () => {
-      const datas = await axios.get('/api/posts')
-      return datas.data.data
-    }
-  })
-
-  
-
+  // Fungsi untuk mendapatkan paragraf deskripsi
   const getParagraphs = (content) => {
     let description;
     const paragraphs = content.content
-      .filter(item => item.type === 'paragraph')
-      .map(paragraph => paragraph.content.map(text => text.text).join(''))
+      .filter((item) => item.type === "paragraph")
+      .map((paragraph) => paragraph.content.map((text) => text.text).join(""))
       .slice(0, 2)
-      .join(' ').replace(/\s+/g, ' ')
-      .trim() // 
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim()
       .slice(0, 160)
       .trim();
     if (paragraphs.length === 160) {
-      const lastSpace = paragraphs.lastIndexOf(' ');
+      const lastSpace = paragraphs.lastIndexOf(" ");
       if (lastSpace > 0) {
         description = paragraphs.slice(0, lastSpace); // Potong di spasi terakhir
       }
     }
-    return description
-  }
+    return description;
+  };
 
+  // Fungsi untuk mendapatkan URL gambar
   const getImageUrl = (content) => {
     const images = content.content
-      .filter(item => item.type === 'image')
-      .map(image => image.attrs.src);
+      .filter((item) => item.type === "image")
+      .map((image) => image.attrs.src);
 
     if (images.length > 0) {
       return images[0];
     }
-  }
+  };
 
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
   return (
     <div className="grid md:grid-cols-6 grid-cols-1 md:w-full max-w-screen py-2 gap-2">
       <div className="md:col-span-4 col-span-1">
         {data.map((e, i) => (
           <div className="w-full border-b p-2 flex-col gap-2 flex" key={i}>
-            <div className='w-full flex items-center gap-2'>
+            <div className="w-full flex items-center gap-2">
               <Image
                 src={e.detail_user.users.image}
                 width={24}
@@ -65,17 +64,21 @@ export default function Home() {
                 alt={e.detail_user.users.name}
                 className="overflow-hidden rounded-full"
               />
-              <h3 className='text-xs font-semibold text-gray-600'>{e.detail_user.users.name}</h3>
+              <h3 className="text-xs font-semibold text-gray-600">
+                {e.detail_user.users.name}
+              </h3>
               <p className="text-xs text-gray-600">
                 <LocalTime time={e.created_at} />
               </p>
             </div>
-            <div className="w-full  flex gap-2 items-center" >
+            <div className="w-full flex gap-2 items-center">
               <div className="">
                 <Link href={`/${e.detail_user.slug}/${e.slug}`} className="hover:underline">
                   <h3 className="text-xl font-semibold">{e.title}</h3>
                 </Link>
-                <p className="text-xs text-gray-600">{getParagraphs(e.content)}...</p>
+                <p className="text-xs text-gray-600">
+                  {getParagraphs(e.content)}...
+                </p>
               </div>
               {getImageUrl(e.content) && (
                 <div className="w-max h-full">
@@ -89,15 +92,10 @@ export default function Home() {
                 </div>
               )}
             </div>
-
           </div>
         ))}
       </div>
-      <div className="md:col-span-2 border rounded-md">
-        Popular
-      </div>
+      <div className="md:col-span-2 border rounded-md">Popular</div>
     </div>
-
   );
 }
-
