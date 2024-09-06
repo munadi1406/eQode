@@ -1,8 +1,7 @@
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import LocalTime from "@/components/dashboard/qrcode/LocalTime";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
 
 export const metadata = {
   metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
