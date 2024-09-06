@@ -99,7 +99,7 @@ const Data = () => {
                                                         scale: 2,
                                                         width: 50,
                                                     }}
-
+                                                    alt={e.tujuan}
                                                 />
 
                                             </div>

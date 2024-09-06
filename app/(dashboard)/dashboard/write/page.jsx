@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
 
 
-const page = () => {
+const Page = () => {
   const [value, setValue] = useState({
     type: "doc",
     content: [

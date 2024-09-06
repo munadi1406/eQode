@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 import { GithubLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 
-const page = () => {
+const Page = () => {
     const { status } = useSession();
  
     useEffect(() => {

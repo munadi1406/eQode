@@ -21,7 +21,7 @@ import Link from 'next/link'
 
 
 
-const page = () => {
+const Page = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['story'], queryFn: async () => {
             const data = await axios.get('/api/story')
