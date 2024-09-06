@@ -9,7 +9,7 @@ import {
   EditorCommandList,
   EditorBubble,
 } from "novel";
-import { ImageResizer, handleCommandNavigation } from "novel/extensions";
+import { handleCommandNavigation } from "novel/extensions";
 import { defaultExtensions } from "@/app/(dashboard)/dashboard/write/extensions";
 import { NodeSelector } from "@/app/(dashboard)/dashboard/write/selectors/node-selector";
 import { LinkSelector } from "@/app/(dashboard)/dashboard/write/selectors/link-selector";
