@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server"
 
-import { getSession } from "@/app/auth"
+import { getSession } from "@/utils/auth"
 import { convertTitleToSlug } from "@/utils/convertUrl";
 
 

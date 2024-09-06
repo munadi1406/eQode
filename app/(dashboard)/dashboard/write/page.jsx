@@ -44,9 +44,7 @@ const page = () => {
 
 
 
-  useEffect(() => {
-    console.log(value)
-  }, [value])
+ 
   return (
     <div className='flex flex-col gap-2'>
       <Button onClick={mutate} disabled={isPending}>Publish</Button>

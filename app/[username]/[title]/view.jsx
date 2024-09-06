@@ -10,15 +10,15 @@ import {
   EditorBubble,
 } from "novel";
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
-import { defaultExtensions } from "@/app/dashboard/write/extensions";
-import { NodeSelector } from "@/app/dashboard/write/selectors/node-selector";
-import { LinkSelector } from "@/app/dashboard/write/selectors/link-selector";
-import { ColorSelector } from "@/app/dashboard/write/selectors/color-selector";
+import { defaultExtensions } from "@/app/(dashboard)/dashboard/write/extensions";
+import { NodeSelector } from "@/app/(dashboard)/dashboard/write/selectors/node-selector";
+import { LinkSelector } from "@/app/(dashboard)/dashboard/write/selectors/link-selector";
+import { ColorSelector } from "@/app/(dashboard)/dashboard/write/selectors/color-selector";
 
-import { TextButtons } from "@/app/dashboard/write/selectors/text-buttons";
-import { slashCommand, suggestionItems } from "@/app/dashboard/write/slash-command";
+import { TextButtons } from "@/app/(dashboard)/dashboard/write/selectors/text-buttons";
+import { slashCommand, suggestionItems } from "@/app/(dashboard)/dashboard/write/slash-command";
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
-import { uploadFn } from "@/app/dashboard/write/image-upload";
+import { uploadFn } from "@/app/(dashboard)/dashboard/write/image-upload";
 import { Separator } from "@/components/ui/separator";
  
 const extensions = [...defaultExtensions, slashCommand];
@@ -51,7 +51,7 @@ const View = ({ initialValue, onChange }) => {
         onUpdate={({ editor }) => {
           onChange(editor.getJSON());
         }}
-        slotAfter={<ImageResizer />}
+        
       >
         <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
           <EditorCommandEmpty className="px-2 text-muted-foreground">

@@ -1,4 +1,4 @@
-import { getSession } from "@/app/auth"
+import { getSession } from "@/utils/auth"
 import { createClient } from "@/utils/supabase/server"
 
 export async function POST(request) {

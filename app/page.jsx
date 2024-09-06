@@ -1,35 +1,103 @@
 'use client'
 
-import { useSession, signIn } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import LocalTime from "@/components/dashboard/qrcode/LocalTime";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import Image from "next/image";
+import Link from "next/link";
 
-import { GithubLoginButton, GoogleLoginButton } from "react-social-login-buttons";
+
 
 
 export default function Home() {
-  const {  status } = useSession();
-  
- 
-  
-  
-  useEffect(()=>{
-  
-    if (status === "authenticated") {
-      redirect('/dashboard')
-    }
-  },[status])
 
+  const { data, isLoading } = useQuery({
+    queryKey: ['posts'], queryFn: async () => {
+      const datas = await axios.get('/api/posts')
+      return datas.data.data
+    }
+  })
+
+  
+
+  const getParagraphs = (content) => {
+    let description;
+    const paragraphs = content.content
+      .filter(item => item.type === 'paragraph')
+      .map(paragraph => paragraph.content.map(text => text.text).join(''))
+      .slice(0, 2)
+      .join(' ').replace(/\s+/g, ' ')
+      .trim() // 
+      .slice(0, 160)
+      .trim();
+    if (paragraphs.length === 160) {
+      const lastSpace = paragraphs.lastIndexOf(' ');
+      if (lastSpace > 0) {
+        description = paragraphs.slice(0, lastSpace); // Potong di spasi terakhir
+      }
+    }
+    return description
+  }
+
+  const getImageUrl = (content) => {
+    const images = content.content
+      .filter(item => item.type === 'image')
+      .map(image => image.attrs.src);
+
+    if (images.length > 0) {
+      return images[0];
+    }
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gray-50">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6">eqoDe Login</h2>
-        <div className="flex justify-center items-center flex-wrap">
-        <GithubLoginButton text="Sign In With Github" onClick={()=>signIn('github')}/>
-        <GoogleLoginButton text="Sign In With Google" onClick={()=>signIn('google')}/>
-        </div>
+    <div className="grid md:grid-cols-6 grid-cols-1 md:w-full max-w-screen py-2 gap-2">
+      <div className="md:col-span-4 col-span-1">
+        {data.map((e, i) => (
+          <div className="w-full border-b p-2 flex-col gap-2 flex" key={i}>
+            <div className='w-full flex items-center gap-2'>
+              <Image
+                src={e.detail_user.users.image}
+                width={24}
+                height={24}
+                alt={e.detail_user.users.name}
+                className="overflow-hidden rounded-full"
+              />
+              <h3 className='text-xs font-semibold text-gray-600'>{e.detail_user.users.name}</h3>
+              <p className="text-xs text-gray-600">
+                <LocalTime time={e.created_at} />
+              </p>
+            </div>
+            <div className="w-full  flex gap-2 items-center" >
+              <div className="">
+                <Link href={`/${e.detail_user.slug}/${e.slug}`} className="hover:underline">
+                  <h3 className="text-xl font-semibold">{e.title}</h3>
+                </Link>
+                <p className="text-xs text-gray-600">{getParagraphs(e.content)}...</p>
+              </div>
+              {getImageUrl(e.content) && (
+                <div className="w-max h-full">
+                  <Image
+                    src={getImageUrl(e.content)}
+                    alt={e.title}
+                    className="rounded-md"
+                    width={100}
+                    height={100}
+                  />
+                </div>
+              )}
+            </div>
+
+          </div>
+        ))}
       </div>
-    </main>
+      <div className="md:col-span-2 border rounded-md">
+        Popular
+      </div>
+    </div>
+
   );
 }
 

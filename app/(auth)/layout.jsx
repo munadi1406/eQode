@@ -1,12 +1,13 @@
+
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+
+import Providers from "../../utils/providers";
 const inter = Inter({ subsets: ["latin"] });
 import { GoogleAnalytics } from '@next/third-parties/google'
-import GlobalNav from "@/components/dashboard/GlobalNav";
-import { getSession } from "../utils/auth";
-import Providers from "../utils/providers";
+import { getSession } from "../../utils/auth";
  
- 
+
 export const metadata = {
   metadataBase: new URL('https://e-qode.vercel.app'),
   title: "Buat Tanda Tangan dengan QR Code | Aplikasi Tanda Tangan Digital",
@@ -41,7 +42,7 @@ export const metadata = {
       me: ['fathullahmunadi1406@gmail.com', 'https://github.com/munadi1406'],
     },
   },
-
+ 
 };
 
 export default async function RootLayout({ children }) {
@@ -52,10 +53,7 @@ export default async function RootLayout({ children }) {
       <body className={inter.className}>
         <main>
           <Providers session={session}>
-            <GlobalNav />
-            <div className="md:w-[80vw] relative m-auto ">
             {children}
-            </div>
           </Providers>
         </main>
       </body>

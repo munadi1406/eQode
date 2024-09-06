@@ -10,6 +10,7 @@ const LocalTime = ({ time }) => {
             // Mengubah waktu UTC ke waktu lokal perangkat
             const localTimeString = new Date(time).toLocaleString();
             setLocalTime(localTimeString);
+            
         }
     }, [time]);
 

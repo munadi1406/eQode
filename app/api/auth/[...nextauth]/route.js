@@ -1,4 +1,4 @@
-import { authOptions } from "@/app/auth";
+import { authOptions } from "@/utils/auth";
 import { SupabaseAdapter } from "@auth/supabase-adapter";
 import NextAuth from "next-auth";
 

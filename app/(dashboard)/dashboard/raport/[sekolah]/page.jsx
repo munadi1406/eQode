@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/client";
-import { getSession } from "@/app/auth";
+import { getSession } from "@/utils/auth";
 import Link from 'next/link'
 
 const page = async ({params}) => {

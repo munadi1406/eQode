@@ -1,4 +1,4 @@
-import Editor from '@/app/dashboard/write/Editor'
+import Editor from '@/app/(dashboard)/dashboard/write/Editor'
 import { createClient } from '@/utils/supabase/client'
 import React from 'react'
 import View from './view'

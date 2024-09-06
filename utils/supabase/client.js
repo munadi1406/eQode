@@ -1,4 +1,4 @@
-import { getSession } from '@/app/auth'
+import { getSession } from '@/utils/auth'
 import { createBrowserClient } from '@supabase/ssr'
 
 
