@@ -31,6 +31,9 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
+    "dompurify": "^3.1.6",
+    "editorjs-html": "^3.4.3",
+    "html-to-json-parser": "^2.0.1",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.429.0",
     "next": "14.2.5",
@@ -47,7 +50,8 @@
     "sharp": "^0.33.5",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "eslint": "8.57.0",

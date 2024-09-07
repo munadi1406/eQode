@@ -22,10 +22,16 @@ export default async function Home() {
   const getParagraphs = (content) => {
     let description;
     const paragraphs = content.content
-      .filter((item) => item.type === "paragraph")
-      .map((paragraph) => paragraph.content.map((text) => text.text).join(""))
-      .slice(0, 2)
-      .join(" ")
+      .filter(item => item.type === 'p') // Filter paragraf
+      .map(paragraph => {
+        // Periksa jika content ada dan merupakan array
+        if (Array.isArray(paragraph.content)) {
+          return paragraph.content.join(' '); // Gabungkan elemen content
+        }
+        return ''; // Jika content tidak ada, kembalikan string kosong
+      })
+      .slice(0, 2) // Ambil hanya dua paragraf pertama
+      .join(' ')
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, 160)
@@ -42,11 +48,49 @@ export default async function Home() {
   // Fungsi untuk mendapatkan URL gambar
   const getImageUrl = (content) => {
     const images = content.content
-      .filter((item) => item.type === "image")
-      .map((image) => image.attrs.src);
+      .filter((item) => item.type === "img")
+      .map((image) => image.attributes.src);
 
     if (images.length > 0) {
       return images[0];
+    }
+  };
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: "Blog Teknologi Terbaru | Panduan dan Ulasan Terkini",
+    description: "Temukan panduan dan ulasan terbaru tentang teknologi, gadget, dan inovasi di blog kami. Dapatkan informasi terkini dan tips berguna untuk membantu Anda tetap up-to-date.",
+    url: 'https://e-qode.vercel.app',
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: data.map((e, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'Article',
+          name: e.title,
+          description: getParagraphs(e.content),
+          url: `https://e-qode.vercel.app/${e.detail_user.slug}/${e.slug}`,
+          image: getImageUrl(e.content),
+          datePublished: e.created_at,
+          author: {
+            '@type': 'Person',
+            name: e.detail_user.users.name
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'eQode'
+          }
+        }
+      }))
+    },
+    author: {
+      '@type': 'Person',
+      name: 'Fathullah Munadi'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'eQode'
     }
   };
 
@@ -63,17 +107,17 @@ export default async function Home() {
                 alt={e.detail_user.users.name}
                 className="overflow-hidden rounded-full"
               />
-              <h3 className="text-xs font-semibold text-gray-600">
+              <h2 className="text-xs font-semibold text-gray-600">
                 {e.detail_user.users.name}
-              </h3>
-              <p className="text-xs text-gray-600">
+              </h2>
+              <h3 className="text-xs text-gray-600">
                 <LocalTime time={e.created_at} />
-              </p>
+              </h3> 
             </div>
             <div className="w-full flex gap-2 items-center">
               <div className="">
                 <Link href={`/${e.detail_user.slug}/${e.slug}`} className="hover:underline">
-                  <h3 className="text-xl font-semibold">{e.title}</h3>
+                  <h1 className="text-xl font-semibold">{e.title}</h1>
                 </Link>
                 <p className="text-xs text-gray-600">
                   {getParagraphs(e.content)}...
@@ -95,6 +139,10 @@ export default async function Home() {
         ))}
       </div>
       <div className="md:col-span-2 border rounded-md">Popular</div>
+      <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
     </div>
   );
 }

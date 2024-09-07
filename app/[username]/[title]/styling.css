@@ -1,3 +1,90 @@
+/* page-specific-styles.css */
+
+/* Custom styles for headings */
+/* Styling untuk paragraf */
+.ProseMirror p {
+    @apply text-gray-600 mb-4 text-lg; /* Menggunakan warna font gray-600 dan margin bawah */
+    line-height: 1.6; /* Atur line-height agar rapi */
+}
+
+/* Styling untuk heading */
+.ProseMirror h1 {
+    @apply text-4xl font-extrabold text-gray-600 mb-4;
+    color: hsl(var(--heading-color, 100, 100, 100)); /* Sesuaikan jika diperlukan */
+}
+
+.ProseMirror h2 {
+    @apply text-3xl font-bold text-gray-600 mb-3;
+    color: hsl(var(--subheading-color, 100, 100, 100)); /* Sesuaikan jika diperlukan */
+}
+
+.ProseMirror h3 {
+    @apply text-2xl font-semibold text-gray-600 mb-2 ;
+    color: hsl(var(--tertiary-heading-color, 100, 100, 100)); /* Sesuaikan jika diperlukan */
+}
+.ProseMirror strong {
+    @apply font-semibold text-black;
+}
+/* Styling untuk elemen kode */
+/* Styling untuk elemen kode */
+/* Styling untuk elemen kode */
+.ProseMirror code {
+    @apply bg-gray-300 text-gray-600 p-2 rounded-sm font-mono text-sm; /* Gaya Tailwind CSS */
+    color: hsl(var(--code-color, 200, 200, 200)); /* Gaya tambahan kustom jika diperlukan */
+    border-radius: 4px; /* Rounded corners untuk tampilan yang lebih rapi */
+    overflow-x: auto; /* Tambahkan scroll horizontal jika kode terlalu panjang */
+    display: block; /* Membuat kode tampil sebagai block element */
+    white-space: pre; /* Pertahankan spasi dan baris baru */
+}
+
+
+/* Styling untuk blockquote */
+.ProseMirror blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4; /* Gaya Tailwind CSS */
+    color: hsl(var(--blockquote-color, 0, 0, 0)); /* Gaya tambahan kustom jika diperlukan */
+    margin: 1rem 0; /* Menambahkan margin atas dan bawah */
+    padding-left: 1rem; /* Menambahkan padding kiri untuk indentasi */
+}
+
+
+
+/* Optional: Add styles for h4, h5, h6 if needed */
+.ProseMirror h4 {
+    @apply text-2xl font-medium text-gray-600 mb-1;
+}
+
+.ProseMirror h5 {
+    @apply text-xl font-medium text-gray-600 mb-1;
+}
+
+.ProseMirror h6 {
+    @apply text-lg font-medium text-gray-600 mb-1;
+}
+
+/* Styling untuk list */
+.ProseMirror ul {
+    @apply list-disc pl-6 mb-4; /* Tambahkan padding kiri untuk menjorok ke dalam */
+    color: gray-600; /* Sesuaikan jika diperlukan */
+    line-height: 1.6; /* Atur line-height agar rapi */
+}
+
+.ProseMirror ol {
+    @apply list-decimal pl-6 mb-4 ; /* Tambahkan padding kiri untuk menjorok ke dalam */
+    color: gray-600; /* Sesuaikan jika diperlukan */
+    line-height: 1.6; /* Atur line-height agar rapi */
+}
+
+.ProseMirror li {
+    @apply mb-2 ;
+    color: gray-600; /* Sesuaikan jika diperlukan */
+    line-height: 1.6; /* Atur line-height agar rapi */
+}
+
+/* Styling tambahan untuk link jika ada */
+.ProseMirror a {
+    @apply text-blue-500 hover:text-blue-700;
+}
+
 .ProseMirror .is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
@@ -18,7 +105,7 @@
 
 .ProseMirror img {
     transition: filter 0.1s ease-in-out;
-
+    border-radius: 20px;
     &:hover {
         cursor: pointer;
         filter: brightness(90%);
@@ -56,7 +143,7 @@
 
 /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
 
-ul[data-type="taskList"] li>label {
+.ProseMirror ul[data-type="taskList"] li>label {
     margin-right: 0.2rem;
     user-select: none;
 }
@@ -67,7 +154,7 @@ ul[data-type="taskList"] li>label {
     }
 }
 
-ul[data-type="taskList"] li>label input[type="checkbox"] {
+.ProseMirror ul[data-type="taskList"] li>label input[type="checkbox"] {
     -webkit-appearance: none;
     appearance: none;
     background-color: hsl(var(--background));
@@ -106,7 +193,7 @@ ul[data-type="taskList"] li>label input[type="checkbox"] {
     }
 }
 
-ul[data-type="taskList"] li[data-checked="true"]>div>p {
+.ProseMirror ul[data-type="taskList"] li[data-checked="true"]>div>p {
     color: var(--muted-foreground);
     text-decoration: line-through;
     text-decoration-thickness: 2px;

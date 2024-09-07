@@ -37,16 +37,24 @@ export async function generateMetadata({ params }) {
 
   let description = 'No description available';
   let imageUrl = ''; // Inisialisasi variabel untuk URL gambar
-
+ 
   try {
     const contentJson = data.content; // Langsung menggunakan objek
 
     // Mengambil teks dari beberapa paragraf pertama
     const paragraphs = contentJson.content
-      .filter(item => item.type === 'paragraph')
-      .map(paragraph => paragraph.content.map(text => text.text).join(''))
-      .slice(0, 2)
-      .join(' ');
+    .filter(item => item.type === 'p') // Filter paragraf
+    .map(paragraph => {
+      // Periksa jika content ada dan merupakan array
+      if (Array.isArray(paragraph.content)) {
+        return paragraph.content.join(' '); // Gabungkan elemen content
+      }
+      return ''; // Jika content tidak ada, kembalikan string kosong
+    })
+    .slice(0, 2) // Ambil hanya dua paragraf pertama
+    .join(' ')
+
+
 
     // Membersihkan dan memotong teks untuk SEO
     description = paragraphs
@@ -64,8 +72,8 @@ export async function generateMetadata({ params }) {
 
     // Mengambil URL gambar pertama dari konten JSON
     const images = contentJson.content
-      .filter(item => item.type === 'image')
-      .map(image => image.attrs.src);
+      .filter(item => item.type === 'img')
+      .map(image => image.attributes.src);
 
     if (images.length > 0) {
       imageUrl = images[0];
@@ -121,21 +129,21 @@ export async function generateMetadata({ params }) {
 
 const Page = async ({ params }) => {
   const data = await getData(params.username, params.title);
+  
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     name: data.title,
     image: data.content.content
-      .filter(item => item.type === 'image')
-      .map(image => image.attrs.src)[0] || '',
-    description: data.content.content
-      .filter(item => item.type === 'paragraph')
-      .map(paragraph => paragraph.content.map(text => text.text).join(''))
-      .slice(0, 2)
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 160),
+      .filter(item => item.type === 'img')
+      .map(image => image.attributes.src)[0] || '',
+    description : data.content.content.filter(item => item.type === 'p').map(paragraph => {
+      // Periksa jika content ada dan merupakan array
+      if (Array.isArray(paragraph.content)) {
+        return paragraph.content.join(' '); // Gabungkan elemen content
+      }
+      return ''; // Jika content tidak ada, kembalikan string kosong
+    }).slice(0, 2).join(' ').replace(/\s+/g, ' ').trim().slice(0, 160),
     author: {
       '@type': 'Person',
       name: data.detail_user.users.name,
@@ -159,7 +167,7 @@ const Page = async ({ params }) => {
             />
           </div>
           <div>
-            <h3 className='text-md font-semibold'>{data.detail_user.users.name}</h3>
+            <h2 className='text-md font-semibold'>{data.detail_user.users.name}</h2>
             <h3 className='text-xs text-gray-600'>{new Date(data.created_at).toLocaleString()}</h3>
           </div>
         </div>

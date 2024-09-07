@@ -21,7 +21,7 @@ import { handleImageDrop, handleImagePaste } from "novel/plugins";
 import { uploadFn } from "./image-upload";
 import { Separator } from "@/components/ui/separator";
 import { detectImageDeletion } from "@/utils/convertUrl";
-
+import { HTMLToJSON } from 'html-to-json-parser';
 const extensions = [...defaultExtensions, slashCommand];
 
 
@@ -30,6 +30,13 @@ const Editor = ({ initialValue, onChange }) => {
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
+
+  const convert = async (html)=>{
+  
+    const datas = await HTMLToJSON(`<div>${html}</div>`, false)
+    onChange(datas)
+  }
+
 
   return (
     <EditorRoot >
@@ -51,9 +58,9 @@ const Editor = ({ initialValue, onChange }) => {
           },
         }}
         onUpdate={({ editor }) => {
-          onChange(editor.getJSON());
           detectImageDeletion(editor.getJSON());
-        }}
+          convert(editor.getHTML())
+        }} 
         slotAfter={<ImageResizer />}
       >
         <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">

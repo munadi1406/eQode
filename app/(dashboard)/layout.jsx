@@ -31,7 +31,7 @@ import "../globals.css";
 import Providers from "../../utils/providers";
 
 
-export default async function Layout({ children }) {
+export default async function RootLayout({ children }) {
   const session = await getSession()
   const supabase = await createClient()
 
