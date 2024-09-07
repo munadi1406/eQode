@@ -29,12 +29,20 @@
 /* Styling untuk elemen kode */
 /* Styling untuk elemen kode */
 .ProseMirror code {
-    @apply bg-gray-300 text-gray-600 p-2 rounded-sm font-mono text-sm; /* Gaya Tailwind CSS */
+    @apply bg-gray-100 text-gray-600 p-2 rounded-sm font-mono text-sm; /* Gaya Tailwind CSS */
     color: hsl(var(--code-color, 200, 200, 200)); /* Gaya tambahan kustom jika diperlukan */
     border-radius: 4px; /* Rounded corners untuk tampilan yang lebih rapi */
     overflow-x: auto; /* Tambahkan scroll horizontal jika kode terlalu panjang */
     display: block; /* Membuat kode tampil sebagai block element */
     white-space: pre; /* Pertahankan spasi dan baris baru */
+}
+.ProseMirror p code {
+    @apply bg-gray-100 text-gray-600 p-1 rounded-sm font-mono text-sm; /* Tailwind CSS styles with slightly different background */
+    color: hsl(var(--code-color, 180, 180, 180)); /* Optional custom color */
+    border-radius: 3px; /* Slightly smaller radius for inline code */
+    white-space: pre-wrap; /* Preserve whitespace but wrap text if needed */
+    display: inline; /* Ensure inline display within the paragraph */
+    overflow: hidden; /* Hide overflow to prevent scrolling */
 }
 
 
