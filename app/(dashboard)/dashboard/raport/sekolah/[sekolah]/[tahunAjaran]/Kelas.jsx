@@ -34,7 +34,7 @@ import {
 
 
 
-export default function Siswa() {
+export default function Kelas() {
   const [dialogSiswa, setDialogSiswa] = useState(false);
   const [formData, setFormData] = useState({
     nisn: '',
@@ -82,10 +82,10 @@ export default function Siswa() {
   return (
     <div className="w-full">
       <div className="p-2 flex justify-end w-full">
-        <Button className="bg-blue-600" onClick={() => setDialogSiswa(true)} >Tambah Data Siswa</Button>
+        <Button className="bg-blue-600" onClick={() => setDialogSiswa(true)} >Tambah Data Kelas</Button>
       </div>
       <Table>
-        <TableCaption>Daftar Siswa</TableCaption>
+        <TableCaption>Daftar Kelas</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Invoice</TableHead>

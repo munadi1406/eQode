@@ -2,29 +2,63 @@
 import { createClient } from "@/utils/supabase/server"
 
 export async function POST(request) {
-    const supabase = await createClient()
-    const { user } = await getSession()
-    const { tahunAwal,tahunAkhir,idSekolah } = await request.json()
+    const supabase = await createClient();
+    const { tahunAwal, tahunAkhir, idSekolah } = await request.json();
 
-    const data = {
-       tahun_ajaran:`${tahunAwal}/${tahunAkhir}`,
-       id_sekolah:idSekolah
+    // Data untuk tabel tahun_ajaran
+    const dataTahunAjaran = {
+        tahun_ajaran: `${tahunAwal}/${tahunAkhir}`,
+        id_sekolah: idSekolah
+    };
 
+    // Insert data tahun_ajaran dan ambil id_tahun_ajaran yang baru saja dibuat
+    const { data: insertTahunAjaran, error: errorTahunAjaran } = await supabase
+        .from('tahun_ajaran')
+        .insert(dataTahunAjaran)
+        .select()
+        .single();
+
+    // Handle error saat insert tahun_ajaran
+    if (errorTahunAjaran) {
+        console.error("Insert tahun_ajaran error:", errorTahunAjaran);
+        return new Response(JSON.stringify({ error: errorTahunAjaran.message }), { status: 500 });
     }
 
-    const { data: insertData, error } = await supabase.from('tahun_ajaran').insert(data).select().single()
-    
-    
+    // Data untuk tabel semester
+    const dataSemester = [
+        {
+            nama: "Semester 1",
+            id_sekolah: idSekolah,
+            id_tahun_ajaran: insertTahunAjaran.id
+        },
+        {
+            nama: "Semester 2",
+            id_sekolah: idSekolah,
+            id_tahun_ajaran: insertTahunAjaran.id
+        }
+    ];
 
+    // Insert data semester
+    const { data: insertSemester, error: errorSemester } = await supabase
+        .from('semester')
+        .insert(dataSemester)
+        .select();
 
-    if (error) {
-        console.error("Insert error:", error)
-        return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    // Handle error saat insert semester
+    if (errorSemester) {
+        console.error("Insert semester error:", errorSemester);
+        return new Response(JSON.stringify({ error: errorSemester.message }), { status: 500 });
     }
 
-
-    return new Response(JSON.stringify({ data: insertData }), { status: 200 })
+    // Return response jika semuanya berhasil
+    return new Response(JSON.stringify({
+        data: {
+            tahun_ajaran: insertTahunAjaran,
+            semester: insertSemester
+        }
+    }), { status: 200 });
 }
+
 export async function GET(request) {
     const supabase = await createClient()
 
