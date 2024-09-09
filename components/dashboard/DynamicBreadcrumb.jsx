@@ -30,12 +30,12 @@ export default function DynamicBreadcrumb() {
           <Fragment key={crumb.href}>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href={crumb.href}>{crumb.label}</Link>
+                <Link href={crumb.href}>{decodeURIComponent(crumb.label)}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             {index != (breadcrumbs.length - 1) && (
               <BreadcrumbSeparator />
-            )}
+            )} 
           </Fragment>
         ))}
       </BreadcrumbList>

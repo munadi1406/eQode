@@ -7,7 +7,7 @@ import VerificationStatus from "./VerifStatus";
 import QRCodeDetails from "./QrCodeDetail";
 
 export async function generateMetadata({ params }) {
-  const supabase = await createClient();
+  const supabase = createClient('');
   const { id, hash } = params;
 
   const { data, error } = await fetchQRCodeData(supabase, id);

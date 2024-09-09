@@ -35,7 +35,7 @@ const Data = () => {
 
     const route = useRouter()
     const handleClick = (nama)=>{
-        route.push(`/dashboard/${nama}`)
+        route.push(`/dashboard/sekolah/${nama}`)
     }
 
     const handleDelete = useMutation({
@@ -57,7 +57,7 @@ const Data = () => {
             {data.map((e, index) => (
                 <ContextMenu key={e.id}>
                     <ContextMenuTrigger>
-                        <Card onClick={()=>handleClick(e.nama)}>
+                        <Card onClick={()=>handleClick(e.nama)} className="cursor-pointer">
                             <CardHeader>
                                 <CardTitle>{e.nama}</CardTitle>
                             </CardHeader>

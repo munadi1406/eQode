@@ -45,6 +45,30 @@
     overflow: hidden; /* Hide overflow to prevent scrolling */
 }
 
+.ProseMirror h1 code {
+    @apply bg-gray-100 text-gray-600 p-1 rounded-sm font-mono text-sm; /* Tailwind CSS styles with slightly different background */
+    color: hsl(var(--code-color, 180, 180, 180)); /* Optional custom color */
+    border-radius: 3px; /* Slightly smaller radius for inline code */
+    white-space: pre-wrap; /* Preserve whitespace but wrap text if needed */
+    display: inline; /* Ensure inline display within the paragraph */
+    overflow: hidden; /* Hide overflow to prevent scrolling */
+}
+.ProseMirror h2 code {
+    @apply bg-gray-100 text-gray-600 p-1 rounded-sm font-mono text-sm; /* Tailwind CSS styles with slightly different background */
+    color: hsl(var(--code-color, 180, 180, 180)); /* Optional custom color */
+    border-radius: 3px; /* Slightly smaller radius for inline code */
+    white-space: pre-wrap; /* Preserve whitespace but wrap text if needed */
+    display: inline; /* Ensure inline display within the paragraph */
+    overflow: hidden; /* Hide overflow to prevent scrolling */
+}
+.ProseMirror h3 code {
+    @apply bg-gray-100 text-gray-600 p-1 rounded-sm font-mono text-sm; /* Tailwind CSS styles with slightly different background */
+    color: hsl(var(--code-color, 180, 180, 180)); /* Optional custom color */
+    border-radius: 3px; /* Slightly smaller radius for inline code */
+    white-space: pre-wrap; /* Preserve whitespace but wrap text if needed */
+    display: inline; /* Ensure inline display within the paragraph */
+    overflow: hidden; /* Hide overflow to prevent scrolling */
+}
 
 /* Styling untuk blockquote */
 .ProseMirror blockquote {

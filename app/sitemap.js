@@ -1,6 +1,7 @@
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 
 const getData = async()=>{
+
     const supabase = await createClient()
     const {data,error} = await supabase.from('articles').select(`*,detail_user(slug)`).order('created_at',{ascending:false});
     return data

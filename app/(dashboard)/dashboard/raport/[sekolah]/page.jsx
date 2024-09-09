@@ -2,9 +2,10 @@ import { createClient } from "@/utils/supabase/client";
 import { getSession } from "@/utils/auth";
 import Link from 'next/link'
 
-const page = async ({params}) => {
-  const supabase =  await createClient()
+const Page = async ({params}) => {
   const session = await getSession()
+  const {supabaseAccessToken} = session
+  const supabase =  createClient(supabaseAccessToken)
  
   const style = {
     link:"bg-blue-800 h-[100px] text-white text-2xl p-2 rounded-md font-semibold justify-center flex items-center"
@@ -32,4 +33,4 @@ const page = async ({params}) => {
   )
 }
 
-export default page
+export default Page

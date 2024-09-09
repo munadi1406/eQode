@@ -1,24 +1,16 @@
-import { getSession } from '@/utils/auth'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-
-
-
-export async function createClient() {
-  const session = await getSession()
-  let token;
-  const data= session
-
-  token = data ? data.supabaseAccessToken : ''
-  return createBrowserClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY,
+// Utilitas untuk membuat Supabase client dengan token dinamis
+export const createClient = (supabaseAccessToken = '') => {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
-        global: { 
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      global: {
+        headers: {
+          Authorization: `Bearer ${supabaseAccessToken}`,
         },
-      }
-  )
-}
+      },
+    }
+  );
+};

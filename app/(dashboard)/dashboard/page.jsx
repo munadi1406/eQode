@@ -4,7 +4,7 @@ import Form from "@/components/dashboard/qrcode/Form"
 
 
 
-const page = () => {
+const Page = () => {
 
 
   return (
@@ -15,4 +15,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

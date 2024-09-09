@@ -32,7 +32,7 @@ const Page = () => {
         return <div>Loading...</div>
     }
     return (
-        <div className='flex flex-col gap-2'>
+        <div className='flex flex-col gap-2 bg-white rounded-md p-2 shadow-md'>
             <h1 className='text-2xl font-semibold'>Your Story</h1>
             {data.map(({ title, created_at, slug, detail_user }, i) => (
                 <div className='rounded-md p-2' key={i}>

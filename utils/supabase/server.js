@@ -4,7 +4,7 @@ import { getSession } from '@/utils/auth'
 export async function createClient() {
   const session = await getSession()
   const cookieStore = cookies()
-  const { supabaseAccessToken } = session
+
 
 
 
@@ -16,7 +16,7 @@ export async function createClient() {
 
       global: {
         headers: {
-          Authorization: `Bearer ${supabaseAccessToken}`,  // Menambahkan token ke header Authorization
+          Authorization: `Bearer ${session?.supabaseAccessToken}`,  // Menambahkan token ke header Authorization
         },
       },
       cookies: {

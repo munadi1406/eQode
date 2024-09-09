@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react"
 import { useState } from "react"
 
 const Form = () => {
-    const { data: { user: { id } } } = useSession()
+    
     const [open, setOpen] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -25,8 +25,6 @@ const Form = () => {
         alamat: '',
         kepalaSekolah: '',
         nip: '',
-        tahunAwal: '',
-        tahunAkhir:'',
     });
 
     const clearData = ()=>{
@@ -128,30 +126,6 @@ const Form = () => {
                             required
                         />
                     </div>
-
-                    <div>
-                        <Label htmlFor="tahunAwal">Tahun Awal</Label>
-                        <Input
-                            type="text"
-                            id="tahunAwal"
-                            name="tahunAwal"
-                            value={formData.tahunAwal}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="tahunAkhir">Tahun Akhir</Label>
-                        <Input
-                            type="text"
-                            id="tahunAkhir"
-                            name="tahunAkhir"
-                            value={formData.tahunAkhir}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
                     <Button type="submit">Submit</Button>
                 </form>
 

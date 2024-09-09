@@ -2,7 +2,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 import { GoogleAnalytics } from '@next/third-parties/google'
-import GlobalNav from "@/components/dashboard/GlobalNav";
 import { getSession } from "../utils/auth";
 import Providers from "../utils/providers";
  
@@ -52,8 +51,7 @@ export default async function RootLayout({ children }) {
       <body className={inter.className}>
         <main>
           <Providers session={session}>
-            <GlobalNav />
-            <div className="md:w-[80vw] relative m-auto ">
+            <div>
             {children}
             </div>
           </Providers>

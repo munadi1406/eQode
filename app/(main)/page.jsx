@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import LocalTime from "@/components/dashboard/qrcode/LocalTime";
 import { createClient } from "@/utils/supabase/client";
+import { getSession } from "next-auth/react";
 
 export const metadata = {
   metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
@@ -15,9 +16,11 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const supabase = await  createClient()
+  
+ 
+  const supabase = await createClient('')
   const { data, error } = await supabase.from('articles').select(`*,detail_user(slug,users(name,image))`).order('created_at', { ascending: false });
-
+  console.log({error})
   // Fungsi untuk mendapatkan paragraf deskripsi
   const getParagraphs = (content) => {
     let description;

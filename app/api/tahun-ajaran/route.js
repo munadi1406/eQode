@@ -1,20 +1,18 @@
-import { getSession } from "@/utils/auth"
+
 import { createClient } from "@/utils/supabase/server"
 
 export async function POST(request) {
     const supabase = await createClient()
     const { user } = await getSession()
-    const { namaSekolah, alamat, kepalaSekolah, nip, } = await request.json()
+    const { tahunAwal,tahunAkhir,idSekolah } = await request.json()
 
     const data = {
-        nama:namaSekolah,
-        alamat,
-        kepala_sekolah:kepalaSekolah,
-        nip,
-        id_user: user.id
+       tahun_ajaran:`${tahunAwal}/${tahunAkhir}`,
+       id_sekolah:idSekolah
+
     }
 
-    const { data: insertData, error } = await supabase.from('sekolah').insert(data).select().single()
+    const { data: insertData, error } = await supabase.from('tahun_ajaran').insert(data).select().single()
     
     
 
@@ -27,14 +25,14 @@ export async function POST(request) {
 
     return new Response(JSON.stringify({ data: insertData }), { status: 200 })
 }
-export async function GET() {
+export async function GET(request) {
     const supabase = await createClient()
 
-    const { user } = await getSession()
+    const searchParams = request.nextUrl.searchParams
+    const id = searchParams.get('id')
 
 
-
-    const { data, error } = await supabase.from('sekolah').select().order('created_at', { ascending: false }).eq('id_user', user.id);
+    const { data, error } = await supabase.from('tahun_ajaran').select('*').order('created_at', { ascending: false }).eq('id_sekolah',id);
 
 
     return new Response(JSON.stringify({ data }), { status: 200 })
