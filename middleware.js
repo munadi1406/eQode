@@ -8,5 +8,5 @@ export default withAuth({
   },
 })
 export const config = {
-  matcher: ['/(dashboard)/dashboard'],  // Jalur yang dilindungi
+  matcher: ['/dashboard'],  // Jalur yang dilindungi
 }
