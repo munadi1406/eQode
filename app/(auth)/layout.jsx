@@ -49,15 +49,10 @@ export default async function RootLayout({ children }) {
 
   const session = await getSession()
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <main>
+  
           <Providers session={session}>
             {children}
           </Providers>
-        </main>
-      </body>
-      <GoogleAnalytics gaId="G-M8CCCSY7SJ" />
-    </html>
+        
   );
 }

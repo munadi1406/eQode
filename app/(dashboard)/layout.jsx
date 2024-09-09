@@ -24,14 +24,11 @@ import CompleteProfileData from "@/components/dashboard/profile/CompleteProfileD
 import { BsPencilSquare } from "react-icons/bs";
 
 import { Toaster } from "@/components/ui/sonner"
-import { Inter } from "next/font/google"
-const inter = Inter({ subsets: ["latin"] });
 import "../globals.css";
 import { HiDocumentReport } from "react-icons/hi";
-import Providers from "../../utils/providers";
 
 
-export default async function RootLayout({ children }) {
+export default async function Layout({ children }) {
   const session =  await getSession()
   
  
