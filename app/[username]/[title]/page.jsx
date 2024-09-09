@@ -5,7 +5,7 @@ import View from './view';
 import Image from 'next/image';
 
 const getData = async (username, title) => {
-  const supabase =  createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('articles')
     .select(`*,detail_user!inner(slug,users(name,image,email))`)
