@@ -87,7 +87,7 @@ export default function Siswa() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [`kelas-${row}`],
+    queryKey: [`siswa-${row}`],
     queryFn: fetchStudents,
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.last_id,
