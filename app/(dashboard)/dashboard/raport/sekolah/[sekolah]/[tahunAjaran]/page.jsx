@@ -2,8 +2,8 @@ import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Siswa from './Siswa'
 import Kelas from './Kelas'
-import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
+import Mapel from './Mapel'
 const SemesterSelect = dynamic(() => import('./SemesterSelect'),
   {
     loading: () => <p>Loading select</p>,
@@ -13,6 +13,7 @@ const SemesterSelect = dynamic(() => import('./SemesterSelect'),
 
 export default function Page({ params, searchParams }) {
   const semester = searchParams.semester
+  console.log({params})
 
 
   return (
@@ -33,8 +34,8 @@ export default function Page({ params, searchParams }) {
           <TabsContent value="siswa">
             <Siswa />
           </TabsContent>
-          <TabsContent value="mapel">Mapel</TabsContent>
-          <TabsContent value="kelas"><Kelas /></TabsContent>
+          <TabsContent value="mapel"><Mapel params={params}/></TabsContent>
+          <TabsContent value="kelas"><Kelas params={params}/></TabsContent>
           <TabsContent value="raport">raport</TabsContent>
         </Tabs>
 

@@ -9,7 +9,7 @@ export default function SchoolForm() {
 
 
   return (
-    <div>
+    <div className='bg-white p-2 shadow-md rounded-md'>
       <Form />
       <Data />
     </div>

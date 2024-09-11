@@ -1,12 +1,16 @@
 import { withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server";
 
 export default withAuth({
-  // Matches the pages config in `[...nextauth]`
   pages: {
     signIn: "/",
     error: "/error",
   },
-})
+});
+
+
+
+
 export const config = {
-  matcher: ['/dashboard(.*)',],  // Jalur yang dilindungi
+  matcher: ['/dashboard(.*)','/api(.*)'],  // Jalur yang dilindungi
 }
