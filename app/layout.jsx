@@ -40,6 +40,9 @@ export const metadata = {
       me: ['fathullahmunadi1406@gmail.com', 'https://github.com/munadi1406'],
     },
   },
+  alternates: {
+    canonical: new URL('https://e-qode.vercel.app'),
+  },
 
 };
 
