@@ -13,7 +13,7 @@ const SemesterSelect = dynamic(() => import('./SemesterSelect'),
 
 export default function Page({ params, searchParams }) {
   const semester = searchParams.semester
-  console.log({params})
+
 
 
   return (

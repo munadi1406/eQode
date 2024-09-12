@@ -10,8 +10,7 @@ export async function POST(request) {
     
     
     const {data:getIdSekolah,error} = await supabase.from('sekolah').select('id').eq('nama',namaSekolah).eq('id_user',user.id).single()
-    console.log({getIdSekolah})
-    console.log({error})
+  
     
     const {data:checkNamaMapel,error:checkNamaMapelError} = await supabase.from('mapel').select('nama').eq('nama',nama).eq('id_sekolah',getIdSekolah.id).single()
     if(checkNamaMapel){

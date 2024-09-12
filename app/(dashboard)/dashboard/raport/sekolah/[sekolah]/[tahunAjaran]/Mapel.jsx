@@ -10,20 +10,15 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useEffect, useRef, useState } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription
-} from "@/components/ui/dialog";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { useInView } from "react-intersection-observer";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+
+import FormCreateMapel from "@/components/dashboard/raport/FormCreateMapel";
+import FormCriteria from "@/components/dashboard/raport/FormCriteria";
 
 
 
@@ -31,27 +26,53 @@ export default function Mapel({ params: { sekolah } }) {
     const [dialogSiswa, setDialogSiswa] = useState(false);
     const [dialogKriteria, setDialogKriteria] = useState(false);
     const [currentData, setCurrentData] = useState({ id: null, nama: '' });
+    const [nameErrors, setNameErrors] = useState({});
     const [kriteria, setKriteria] = useState([
-        { nama: "", bobot: "",idMapel:currentData.id }, // State awal dengan satu kriteria
+        { nama: "", bobot: "", id_mapel: null, id: null, deleted: false }, // State awal dengan satu kriteria
     ]);
 
     // Menangani perubahan input
     const handleKriteriaChange = (index, e) => {
         const { name, value } = e.target;
         const updatedKriteria = [...kriteria];
-        updatedKriteria[index][name] = value;
-        updatedKriteria[index].idMapel = currentData.id;
+
+        // Update nilai kriteria pada index yang diberikan
+        updatedKriteria[index] = {
+            ...updatedKriteria[index],
+            [name]: value
+        };
+        updatedKriteria[index].id_mapel = currentData.id
+
+        // Pengecekan apakah nama kriteria sudah digunakan (case-insensitive)
+        if (name === "nama") {
+            const isDuplicate = updatedKriteria.some(
+                (item, idx) => item.nama?.toLowerCase() === value.toLowerCase() && idx !== index
+            );
+
+            setNameErrors((prevErrors) => ({
+                ...prevErrors,
+                [index]: isDuplicate
+            }));
+        }
+
         setKriteria(updatedKriteria);
     };
-    useEffect(()=>{
-        console.log(kriteria)
-    },[kriteria])
+    
     // Fungsi untuk menambah kriteria baru
     const handleAddKriteria = () => {
-        setKriteria([...kriteria, { nama: "", bobot: "",idMapel:currentData.id }]); // Tambah kriteria baru
+        setKriteria([...kriteria, { nama: "", bobot: "", id_mapel: currentData.id, id: null, deleted: false }]); // Tambah kriteria baru
     };
 
+    const [totalBobot, setTotalBobot] = useState(0);
+    const [bobotError, setBobotError] = useState("");
 
+
+
+    useEffect(() => {
+        // Calculate the total bobot when kriteria changes
+        const total = kriteria.reduce((sum, item) => sum + parseFloat(item.bobot || 0), 0);
+        setTotalBobot(total);
+    }, [kriteria]);
 
     const [formData, setFormData] = useState({
         nama: '',
@@ -72,6 +93,11 @@ export default function Mapel({ params: { sekolah } }) {
             kkm: '',
 
         });
+    };
+    const clearKriteriaData = () => {
+        setKriteria([
+            { nama: "", bobot: "", id_mapel: null, id: null, deleted: false }, // Mengatur ulang state ke nilai awal
+        ]);
     };
 
 
@@ -125,7 +151,7 @@ export default function Mapel({ params: { sekolah } }) {
             refetch()
         },
         onError: (error) => {
-            console.error("Error:", error);
+           
             toast.error(error.response.data.message)
         }
     });
@@ -134,6 +160,162 @@ export default function Mapel({ params: { sekolah } }) {
         e.preventDefault();
         mutation.mutate(formData); // Panggil mutasi di sini
     };
+    const handleRemoveKriteria = (index) => {
+        const updatedKriteria = [...kriteria];
+        updatedKriteria[index].deleted = true; // Tandai sebagai deleted
+        setKriteria(updatedKriteria);
+    };
+    // Mutation untuk menghapus kriteria secara bulk
+    const generateToastId = () => `toast-${Date.now()}`;
+
+    // Toast configuration to ensure new toasts stack on top
+    const toastConfig = {
+        autoClose: 5000,        // Duration for auto-close
+        hideProgressBar: false, // Show progress bar
+        closeOnClick: true,     // Allows to close the toast by clicking
+        pauseOnHover: true,     // Pauses the toast on hover
+        draggable: true,        // Allows dragging the toast
+        progress: undefined,
+    };
+
+    const deleteKriteriaMutation = useMutation({
+        mutationFn: async (ids) => {
+            const toastId = generateToastId();
+            toast.loading("Menghapus kriteria...", { ...toastConfig, id: toastId });
+            try {
+                const response = await axios.put('/api/kriteria', { ids });
+                return { response, toastId };
+            } catch (error) {
+                return { error, toastId };
+            }
+        },
+        onSuccess: ({ response, toastId }) => {
+            toast.dismiss(toastId);
+            toast.success('Kriteria berhasil dihapus', { ...toastConfig, id: toastId });
+        },
+        onError: ({ error, toastId }) => {
+            toast.dismiss(toastId);
+            toast.error(`Error saat menghapus kriteria: ${error.response?.data?.message || error.message}`, { ...toastConfig, toastId });
+        },
+    });
+
+    const saveKriteriaMutation = useMutation({
+        mutationFn: async (kriteria) => {
+            const toastId = generateToastId(); // Generate a unique toast ID
+            toast.loading('Menyimpan Kriteria...', { ...toastConfig, id: toastId });
+
+            try {
+                const response = await axios.post('/api/kriteria', { kriteria });
+                return { response, toastId }; // Return both response and toastId
+            } catch (error) {
+                return { error, toastId }; // Return both error and toastId
+            }
+        },
+        onSuccess: ({ response, toastId }) => {
+           
+            toast.dismiss(toastId); // Dismiss the loading toast
+            toast.success(response.data.message, { ...toastConfig }); // Unique ID for success toast
+            clearKriteriaData(); // Call this if needed
+        },
+        onError: ({ error, toastId }) => {
+            toast.dismiss(toastId); // Dismiss the loading toast
+            toast.error(`${error.response?.data?.message || 'Terjadi kesalahan'}`, { ...toastConfig, toastId: `${toastId}-error` }); // Unique ID for error toast
+        },
+    });
+
+
+    const { data: kriteriaData, isLoading: kriteriaIsLoading } = useQuery({
+        queryKey: [`kriteria-${currentData.id}`], queryFn: async () => {
+            const datas = await axios.get(`/api/kriteria`, { params: { id: currentData.id } })
+            return datas.data.data
+        },
+        enabled: currentData.id !== null
+    })
+
+
+    useEffect(() => {
+        if (kriteriaData && kriteriaData.length > 0) {
+            // Isi kriteria dengan data dari kriteriaData
+            setKriteria(
+                kriteriaData.map(item => ({
+                    id: item.id || null,
+                    nama: item.nama || "",
+                    bobot: item.bobot || "",
+                    id_mapel: item.id_mapel || null,
+                    deleted: false // Properti tambahan jika ingin ditandai apakah dihapus atau tidak
+                }))
+            );
+        } else {
+            // Jika tidak ada kriteriaData, set ke default value (optional)
+            setKriteria([
+                { nama: "", bobot: "", id_mapel: null, id: null, deleted: false }
+            ]);
+        }
+    }, [currentData, kriteriaData]);
+
+
+
+    const handleSubmitKriteria = async (e) => {
+        e.preventDefault();
+
+        // Filter kriteria yang ditandai untuk dihapus
+        const deletedKriteria = kriteria.filter(item => item.deleted && item.id);
+
+        try {
+
+            if (deletedKriteria.length > 0) {
+                await deleteKriteriaMutation.mutateAsync(deletedKriteria.map(item => item.id));
+            }
+
+            // Kirim data kriteria yang tidak dihapus ke server untuk disimpan
+            const updatedKriteria = kriteria
+                .filter(item => !item.deleted)  // Filter out deleted items
+                .map(({ deleted, id, ...rest }) => {
+                    // Jika id tidak null, masukkan ke objek, jika null, abaikan id
+                    const result = { ...rest };
+                    if (id !== null) {
+                        result.id = id;  // Masukkan id hanya jika id tidak null
+                    }
+                    return result;
+                });
+
+            // Panggil mutasi untuk menyimpan data kriteria yang tidak dihapus
+            await saveKriteriaMutation.mutateAsync(updatedKriteria);
+
+            // Handle sukses (misalnya menutup dialog, menampilkan notifikasi, dll.)
+          
+            setDialogKriteria(false)
+        } catch (error) {
+            
+        }
+    };
+    const getTotalBobotStyle = () => {
+        if (totalBobot < 100) {
+            return 'text-red-500'; // Red color for values below 100
+        }
+        if (totalBobot === 100) {
+            return 'text-green-500'; // Green color for exact 100
+        }
+        if (totalBobot > 100) {
+            return 'text-red-500'
+        }
+        return 'text-orange-500'; // Orange color for values above 100
+    };
+    const isSubmitDisabled = () => {
+        // Check if save or delete mutation is in progress
+        const isMutationPending = saveKriteriaMutation.isLoading || deleteKriteriaMutation.isLoading;
+
+        // Check if total bobot exceeds 100
+        const isTotalBobotInvalid = totalBobot > 100 || totalBobot < 100;
+
+        // Check if any kriteria item has empty nama or bobot
+        const hasEmptyFields = kriteria.some(item => !item.nama || item.bobot === "");
+
+        // Return true if any condition for disabling is met
+        return isMutationPending || isTotalBobotInvalid || hasEmptyFields;
+    };
+
+
 
     return (
         <div className="w-full">
@@ -144,7 +326,7 @@ export default function Mapel({ params: { sekolah } }) {
                 <TableCaption>Daftar Mata Pelajaran</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[100px]">NISN</TableHead>
+                        <TableHead className="w-[100px]">No</TableHead>
                         <TableHead>Mata Pelajaran</TableHead>
                         <TableHead>KKM</TableHead>
                         <TableHead>Created At</TableHead>
@@ -175,99 +357,9 @@ export default function Mapel({ params: { sekolah } }) {
             <div ref={ref} style={{ height: 20 }} />
             {isFetchingNextPage && <p>Loading more...</p>}
 
-            <Dialog open={dialogSiswa} onOpenChange={setDialogSiswa}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Tambah Data Mata Pelajaran</DialogTitle>
-                        <DialogDescription>Silahkan isi form dibawah ini untuk menambahkan data mata pelajaran</DialogDescription>
-                    </DialogHeader>
+            <FormCreateMapel dialogMapel={dialogSiswa} formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} mutation={mutation} setDialogMapel={setDialogSiswa} />
+            <FormCriteria currentData={currentData} dialogKriteria={dialogKriteria} handleSubmitKriteria={handleSubmitKriteria} handleAddKriteria={handleAddKriteria} getTotalBobotStyle={getTotalBobotStyle} handleRemoveKriteria={handleRemoveKriteria} isSubmitDisabled={isSubmitDisabled} handleKriteriaChange={handleKriteriaChange} kriteria={kriteria} setDialogKriteria={setDialogKriteria} totalBobot={totalBobot} nameErrors={nameErrors} />
 
-                    <form onSubmit={handleSubmit} className="space-y-4 p-4">
-                        <div>
-                            <Label htmlFor="nama">Nama Mata Pelajaran</Label>
-                            <Input
-                                type="text"
-                                id="nama"
-                                name="nama"
-                                value={formData.nama}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <Label htmlFor="kkm">KKM</Label>
-                            <Input
-                                type="number"
-                                id="kkm"
-                                name="kkm"
-                                value={formData.kkm}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-
-
-                        <Button type="submit" disabled={mutation.isPending}>
-                            Simpan
-                        </Button>
-                    </form>
-                </DialogContent>
-            </Dialog>
-            <Dialog open={dialogKriteria} onOpenChange={setDialogKriteria}>
-                <DialogContent >
-                    <DialogHeader>
-                        <DialogTitle>Kriteria Penilaian Mata Pelajaran {currentData.nama}</DialogTitle>
-                        <DialogDescription>
-                            Silahkan isi form dibawah ini untuk menambahkan data kriteria pada mata
-                            pelajaran {currentData.nama}
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <form onSubmit={handleSubmit} className="w-full px-2">
-                        <div className="max-h-[400px] w-full overflow-auto flex flex-col  p-2">
-                            {kriteria.map((item, index) => (
-                                <div key={index} className="grid grid-cols-1 w-full">
-                                    <div>
-                                        <Label htmlFor={`nama-${index}`}>Nama Kriteria</Label>
-                                        <Input
-                                            type="text"
-                                            id={`nama-${index}`}
-                                            name="nama"
-                                            value={item.nama}
-                                            onChange={(e) => handleKriteriaChange(index, e)}
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor={`bobot-${index}`}>Bobot</Label>
-                                        <Input
-                                            type="number"
-                                            id={`bobot-${index}`}
-                                            name="bobot"
-                                            value={item.bobot}
-                                            onChange={(e) => handleKriteriaChange(index, e)}
-                                            required
-                                            min={0}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="flex gap-2 justify-between w-full">
-
-                            <Button type="button" onClick={handleAddKriteria} className="bg-green-500">
-                                Tambah Kriteria
-                            </Button>
-
-                            <Button type="submit" className="bg-blue-600">
-                                Simpan
-                            </Button>
-                        </div>
-                    </form>
-                </DialogContent>
-            </Dialog>
         </div>
     )
 }

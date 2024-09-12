@@ -167,7 +167,7 @@ export default async function Layout({ children }) {
                       </div>
                     )}
                 </div>
-                <Toaster />
+                <Toaster visibleToasts={9}/>
               </main>
             </div>
          

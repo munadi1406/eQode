@@ -30,7 +30,7 @@ export async function POST(request) {
         id_user:user.id
     };
 
-    console.log(dataTahunAjaran)
+  
 
 
     // Insert data tahun_ajaran dan ambil id_tahun_ajaran yang baru saja dibuat
