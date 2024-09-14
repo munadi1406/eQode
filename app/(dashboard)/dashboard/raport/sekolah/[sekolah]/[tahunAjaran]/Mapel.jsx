@@ -57,7 +57,7 @@ export default function Mapel({ params: { sekolah } }) {
 
         setKriteria(updatedKriteria);
     };
-    
+
     // Fungsi untuk menambah kriteria baru
     const handleAddKriteria = () => {
         setKriteria([...kriteria, { nama: "", bobot: "", id_mapel: currentData.id, id: null, deleted: false }]); // Tambah kriteria baru
@@ -141,7 +141,7 @@ export default function Mapel({ params: { sekolah } }) {
     }, [row])
     const mutation = useMutation({
         mutationFn: async (formData) => {
-            const response = await axios.post('/api/mapel', formData);
+            const response = await axios.post('/api/mapel', { data: formData });
             return response.data;
         },
         onSuccess: (data) => {
@@ -151,7 +151,7 @@ export default function Mapel({ params: { sekolah } }) {
             refetch()
         },
         onError: (error) => {
-           
+
             toast.error(error.response.data.message)
         }
     });
@@ -212,7 +212,7 @@ export default function Mapel({ params: { sekolah } }) {
             }
         },
         onSuccess: ({ response, toastId }) => {
-           
+
             toast.dismiss(toastId); // Dismiss the loading toast
             toast.success(response.data.message, { ...toastConfig }); // Unique ID for success toast
             clearKriteriaData(); // Call this if needed
@@ -283,10 +283,10 @@ export default function Mapel({ params: { sekolah } }) {
             await saveKriteriaMutation.mutateAsync(updatedKriteria);
 
             // Handle sukses (misalnya menutup dialog, menampilkan notifikasi, dll.)
-          
+
             setDialogKriteria(false)
         } catch (error) {
-            
+
         }
     };
     const getTotalBobotStyle = () => {
@@ -337,8 +337,10 @@ export default function Mapel({ params: { sekolah } }) {
                     {data?.pages.map((page, pageIndex) =>
                         page?.data.map((mapel, index) => (
                             <TableRow key={mapel.id}>
-                                <TableCell className="font-medium">{pageIndex * 10 + index + 1}</TableCell>
-                                <TableCell>{mapel.nama}</TableCell>
+                                <TableCell className="font-medium">{pageIndex * row + index + 1}</TableCell>
+                                <TableCell>
+                                    <div className="flex gap-2">{mapel.nama}<Badge className="bg-indigo-600">Kelas {mapel.kelas.nama}</Badge></div>
+                                </TableCell>
                                 <TableCell>{mapel.kkm}</TableCell>
                                 <TableCell>{new Date(mapel.created_at).toLocaleString()}</TableCell>
                                 <TableCell>
@@ -357,7 +359,7 @@ export default function Mapel({ params: { sekolah } }) {
             <div ref={ref} style={{ height: 20 }} />
             {isFetchingNextPage && <p>Loading more...</p>}
 
-            <FormCreateMapel dialogMapel={dialogSiswa} formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} mutation={mutation} setDialogMapel={setDialogSiswa} />
+            <FormCreateMapel dialogMapel={dialogSiswa} formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} mutation={mutation} setDialogMapel={setDialogSiswa} sekolah={sekolah} />
             <FormCriteria currentData={currentData} dialogKriteria={dialogKriteria} handleSubmitKriteria={handleSubmitKriteria} handleAddKriteria={handleAddKriteria} getTotalBobotStyle={getTotalBobotStyle} handleRemoveKriteria={handleRemoveKriteria} isSubmitDisabled={isSubmitDisabled} handleKriteriaChange={handleKriteriaChange} kriteria={kriteria} setDialogKriteria={setDialogKriteria} totalBobot={totalBobot} nameErrors={nameErrors} />
 
         </div>

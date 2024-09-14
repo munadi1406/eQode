@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import React,{ useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +37,7 @@ import { useInView } from "react-intersection-observer";
 
 
 
-export default function Kelas({ params }) {
+export default function Raport({ params }) {
 
   const [dialogKelas, setDialogKelas] = useState(false);
   const [row, setRow] = useState(10)
@@ -120,20 +120,8 @@ export default function Kelas({ params }) {
   };
   return (
     <div className="w-full">
-      <div className="p-2 flex justify-end w-full">
-        <Button className="bg-blue-600" onClick={() => setDialogKelas(true)} >Tambah Data Kelas</Button>
-      </div>
-      <Select value={row} onValueChange={(e)=>setRow(e)}>
-        <SelectTrigger className="w-[100px]">
-          <SelectValue placeholder={row} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={10}>10</SelectItem>
-          <SelectItem value={50}>50</SelectItem>
-          <SelectItem value={100}>100</SelectItem>
-        </SelectContent>
-      </Select>
-
+     
+      
       <Table>
         <TableCaption>Daftar Kelas</TableCaption>
         <TableHeader>
@@ -145,27 +133,16 @@ export default function Kelas({ params }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-        {data?.pages.map((page, pageIndex) =>
-  page?.data.map((kelas, index) => (
-    <React.Fragment key={kelas.id}>
-      <TableRow>
-        <TableCell className="font-medium">{pageIndex * 10 + index + 1}</TableCell>
-        <TableCell>{kelas.nama}</TableCell>
-        <TableCell>{new Date(kelas.created_at).toLocaleString()}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell colSpan={3}>
-          <div className="flex gap-2 justify-center">
-            <Button>Mata Pelajaran</Button>
-            <Button>Input Nilai</Button>
-            <Button>Raport</Button>
-          </div>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  ))
-)}
-
+          {data?.pages.map((page, pageIndex) =>
+            page?.data.map((kelas, index) => (
+              <TableRow key={kelas.id}>
+                <TableCell className="font-medium">{pageIndex * 10 + index + 1}</TableCell>
+                <TableCell>{kelas.nama}</TableCell>
+                <TableCell>{new Date(kelas.created_at).toLocaleString()}</TableCell>
+                <TableCell><Badge>Tambah Data Siswa</Badge></TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
       <div ref={ref} style={{ height: 20 }} />

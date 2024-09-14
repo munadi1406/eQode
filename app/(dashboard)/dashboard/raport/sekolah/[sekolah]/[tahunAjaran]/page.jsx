@@ -4,6 +4,7 @@ import Siswa from './Siswa'
 import Kelas from './Kelas'
 import dynamic from 'next/dynamic'
 import Mapel from './Mapel'
+import Raport from './Raport'
 const SemesterSelect = dynamic(() => import('./SemesterSelect'),
   {
     loading: () => <p>Loading select</p>,
@@ -24,6 +25,7 @@ export default function Page({ params, searchParams }) {
 
       </div>
       <div className="w-full bg-white shadow-md rounded-md p-2 ">
+      <Kelas params={params}/>
         <Tabs defaultValue="siswa" className="w-full">
           <TabsList>
             <TabsTrigger value="siswa">Siswa</TabsTrigger>
@@ -36,9 +38,8 @@ export default function Page({ params, searchParams }) {
           </TabsContent>
           <TabsContent value="mapel"><Mapel params={params}/></TabsContent>
           <TabsContent value="kelas"><Kelas params={params}/></TabsContent>
-          <TabsContent value="raport">raport</TabsContent>
+          <TabsContent value="raport"><Raport params={params}/></TabsContent>
         </Tabs>
-
       </div>
     </div>
   )

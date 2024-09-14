@@ -65,16 +65,19 @@ export async function GET(request) {
     const limit = row;
 
     // Inisialisasi query tanpa kondisi apapun
-    let query = supabase.from('kelas').select('*').order('created_at', { ascending: false });
+    let query = supabase.from('kelas').select('*');
 
     // Jika all tidak bernilai true, terapkan kondisi limit dan lt
     if (!all) {
+        query = query.order('id', { ascending: false })
         if (limit) {
             query = query.limit(limit);
         }
-        if (id != 0) {
+        if (id > 0) {
             query = query.lt('id', id);
         }
+    }else{
+        query.order('nama',{ascending:true})
     }
 
     const { data, error } = await query;

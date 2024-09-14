@@ -4,52 +4,90 @@ import { createClient } from "@/utils/supabase/server"
 
 export async function POST(request) {
     const supabase = await createClient();
-    const { user } = await getSession()
-    const { nama,kkm,namaSekolah } = await request.json();
+    const { user } = await getSession();
+    
+    // Dapatkan seluruh data dari satu properti "data"
+    const { data } = await request.json(); 
+    const namaSekolah = data[0].namaSekolah
+    const idKelas =data[0].idKelas
+    
 
-    
-    
-    const {data:getIdSekolah,error} = await supabase.from('sekolah').select('id').eq('nama',namaSekolah).eq('id_user',user.id).single()
+    // Ambil ID sekolah berdasarkan namaSekolah dan user.id
+    const { data: getIdSekolah, error: errorGetIdSekolah } = await supabase
+        .from('sekolah')
+        .select('id')
+        .eq('nama', namaSekolah)
+        .eq('id_user', user.id)
+        .single();
   
-    
-    const {data:checkNamaMapel,error:checkNamaMapelError} = await supabase.from('mapel').select('nama').eq('nama',nama).eq('id_sekolah',getIdSekolah.id).single()
-    if(checkNamaMapel){
+    if (errorGetIdSekolah || !getIdSekolah) {
         return new Response(JSON.stringify({
-            message:"NISN Sudah Digunakan",
-            statusCode:401
+            message: "Sekolah tidak ditemukan atau terjadi kesalahan.",
+            statusCode: 404
         }), { status: 404 });
     }
-    
-    
-    
-    const dataMapel = {
-        nama,
-        kkm:Number(kkm),
-        id_sekolah:getIdSekolah.id
-    };
+
+    const sekolahId = getIdSekolah.id;
 
     
+    
+    
 
-
-    // Insert data tahun_ajaran dan ambil id_tahun_ajaran yang baru saja dibuat
-    const { error: errorMapel } = await supabase
+    // Query untuk memeriksa apakah ada nama mata pelajaran yang sudah ada di database
+    const { data: allMapel, error: errorAllMapel } = await supabase
         .from('mata_pelajaran')
-        .insert(dataMapel)
-
-    // Handle error saat insert tahun_ajaran
-    if (errorMapel) {
-        console.error("Insert tahun_ajaran error:", errorMapel);
-        return new Response(JSON.stringify({ error: errorMapel.message }), { status: 500 });
+        .select('nama')
+        .eq('id_sekolah', sekolahId).eq('id_kelas',idKelas);
+    
+    // Handle jika terjadi error saat mengambil semua mata pelajaran
+    if (errorAllMapel) {
+        return new Response(JSON.stringify({
+            message: "Terjadi kesalahan saat mengambil data mata pelajaran.",
+            statusCode: 500
+        }), { status: 500 });
     }
 
+    // Ambil nama-nama mata pelajaran yang sudah ada di database
+    const existingNames = new Set(allMapel.map(mapel => mapel.nama));
 
-   
-   
+    // Periksa apakah ada nama mata pelajaran dalam request yang sudah ada di database
+    const duplicateNames = data
+        .map(mapel => mapel.nama)
+        .filter(nama => existingNames.has(nama));
+
+    if (duplicateNames.length > 0) {
+        return new Response(JSON.stringify({
+            message: `Nama Mata Pelajaran berikut sudah digunakan: ${duplicateNames.join(', ')}`,
+            statusCode: 401
+        }), { status: 401 });
+    }
+
+    // Buat array data untuk di-insert secara bulk dan tambahkan idKelas ke setiap mata pelajaran
+    const dataMapelBulk = data.map(mapel => ({
+        nama: mapel.nama,
+        kkm: Number(mapel.kkm),
+        id_sekolah: sekolahId,
+        id_kelas: idKelas  // Tambahkan idKelas dari request data
+    }));
+
+    // Insert data mata pelajaran secara bulk
+    const { error: errorMapelBulk } = await supabase
+        .from('mata_pelajaran')
+        .insert(dataMapelBulk);
+
+    // Handle error saat insert
+    if (errorMapelBulk) {
+        console.error("Insert mata pelajaran error:", errorMapelBulk);
+        return new Response(JSON.stringify({ error: errorMapelBulk.message }), { status: 500 });
+    }
+
+    // Berhasil menyimpan data mata pelajaran
     return new Response(JSON.stringify({
-        message:"Mata pelajaran berhasil disimpan, Silahkan tambahkan kriteria penilaian",
-        statusCode:201
+        message: "Mata pelajaran berhasil disimpan, silahkan tambahkan kriteria penilaian.",
+        statusCode: 201
     }), { status: 201 });
 }
+
 
 export async function GET(request) {
     const supabase = await createClient();
@@ -61,14 +99,14 @@ export async function GET(request) {
     const limit = row;
 
     // Inisialisasi query tanpa kondisi apapun
-    let query = supabase.from('mata_pelajaran').select('*').order('created_at', { ascending: false });
+    let query = supabase.from('mata_pelajaran').select('*,kelas(nama)').order('id', { ascending: false });
 
     // Jika all tidak bernilai true, terapkan kondisi limit dan lt
     if (!all) {
         if (limit) {
             query = query.limit(limit);
         }
-        if (id != 0) {
+        if (id > 0) {
             query = query.lt('id', id);
         }
     }
