@@ -58,9 +58,10 @@ export async function GET(request) {
     const row = searchParams.get('row'); // Ambil parameter row dari query string
     const all = searchParams.get('all'); // Ambil parameter all dari query string
     const limit = row;
+    const idKelas = searchParams.get('kelas'); // Ambil parameter all dari query string
 
     // Inisialisasi query tanpa kondisi apapun
-    let query = supabase.from('siswa').select('*,kelas(nama)').order('created_at', { ascending: false });
+    let query = supabase.from('siswa').select('*,kelas(nama)').eq('id_kelas',idKelas).order('created_at', { ascending: false });
 
     // Jika all tidak bernilai true, terapkan kondisi limit dan lt
     if (!all) {

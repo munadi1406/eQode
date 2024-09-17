@@ -25,8 +25,8 @@ export default function Page({ params, searchParams }) {
 
       </div>
       <div className="w-full bg-white shadow-md rounded-md p-2 ">
-      <Kelas params={params}/>
-        <Tabs defaultValue="siswa" className="w-full">
+        <Kelas params={params} />
+        {/* <Tabs defaultValue="siswa" className="w-full">
           <TabsList>
             <TabsTrigger value="siswa">Siswa</TabsTrigger>
             <TabsTrigger value="mapel">Mata Pelajaran</TabsTrigger>
@@ -36,10 +36,10 @@ export default function Page({ params, searchParams }) {
           <TabsContent value="siswa">
             <Siswa />
           </TabsContent>
-          <TabsContent value="mapel"><Mapel params={params}/></TabsContent>
-          <TabsContent value="kelas"><Kelas params={params}/></TabsContent>
-          <TabsContent value="raport"><Raport params={params}/></TabsContent>
-        </Tabs>
+          <TabsContent value="mapel"><Mapel params={params} /></TabsContent>
+          <TabsContent value="kelas"><Kelas params={params} /></TabsContent>
+          <TabsContent value="raport"><Raport params={params} /></TabsContent>
+        </Tabs> */}
       </div>
     </div>
   )

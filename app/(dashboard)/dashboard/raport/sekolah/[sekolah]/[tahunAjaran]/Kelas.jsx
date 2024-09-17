@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import React,{ useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,8 +29,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge";
 import { useInView } from "react-intersection-observer";
+import Mapel from "./Mapel";
+import { FaBook, FaChartBar, FaPen, FaUser } from "react-icons/fa";
+import { buttonData } from "./buttonAction";
+import Siswa from "./Siswa";
 
 
 
@@ -41,6 +44,15 @@ export default function Kelas({ params }) {
 
   const [dialogKelas, setDialogKelas] = useState(false);
   const [row, setRow] = useState(10)
+  const [buttonClickValue, setButtonValueClick] = useState({ value: '', index: null });
+  const handleClick = (value, index) => {
+    if (buttonClickValue === value) {
+      console.log(buttonClickValue === value)
+      setButtonValueClick({ value: '', index: null })
+      return;
+    }
+    setButtonValueClick({ value, index })
+  }
 
 
   const [formData, setFormData] = useState({
@@ -62,7 +74,7 @@ export default function Kelas({ params }) {
 
     });
   };
-  
+
 
   const fetchClasses = async ({ pageParam = null }) => {
     const res = await axios.get('/api/kelas', {
@@ -81,7 +93,7 @@ export default function Kelas({ params }) {
     queryFn: fetchClasses,
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.last_id,
-    
+
   })
   const mutation = useMutation({
     mutationFn: async (formData) => {
@@ -98,7 +110,7 @@ export default function Kelas({ params }) {
       toast.error(error.response.data.message)
     }
   });
-  
+
   const { ref, inView, entry } = useInView({
     /* Optional options */
     threshold: 0,
@@ -110,9 +122,9 @@ export default function Kelas({ params }) {
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
-  useEffect(()=>{
+  useEffect(() => {
     refetch()
-  },[row])
+  }, [row])
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -123,7 +135,7 @@ export default function Kelas({ params }) {
       <div className="p-2 flex justify-end w-full">
         <Button className="bg-blue-600" onClick={() => setDialogKelas(true)} >Tambah Data Kelas</Button>
       </div>
-      <Select value={row} onValueChange={(e)=>setRow(e)}>
+      <Select value={row} onValueChange={(e) => setRow(e)}>
         <SelectTrigger className="w-[100px]">
           <SelectValue placeholder={row} />
         </SelectTrigger>
@@ -140,31 +152,61 @@ export default function Kelas({ params }) {
           <TableRow>
             <TableHead>No</TableHead>
             <TableHead>Kelas</TableHead>
-            <TableHead>Created At</TableHead>
-            
+            <TableHead>Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-        {data?.pages.map((page, pageIndex) =>
-  page?.data.map((kelas, index) => (
-    <React.Fragment key={kelas.id}>
-      <TableRow>
-        <TableCell className="font-medium">{pageIndex * 10 + index + 1}</TableCell>
-        <TableCell>{kelas.nama}</TableCell>
-        <TableCell>{new Date(kelas.created_at).toLocaleString()}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell colSpan={3}>
-          <div className="flex gap-2 justify-center">
-            <Button>Mata Pelajaran</Button>
-            <Button>Input Nilai</Button>
-            <Button>Raport</Button>
-          </div>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  ))
-)}
+          {data?.pages.map((page, pageIndex) =>
+            page?.data.map((kelas, index) => (
+              <React.Fragment key={kelas.id}>
+                <TableRow>
+                  <TableCell>{pageIndex * 10 + index + 1}</TableCell>
+                  <TableCell className="w-[200px] relative">Kelas {kelas.nama}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      {buttonData.map((button, idx) => (
+                        <Button
+                          key={idx}
+                          onClick={()=>handleClick(button.value,index)}
+                          className={`${button.color} text-white flex items-center gap-2`}
+                        >
+                          {button.icon} {button.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </TableCell>
+                </TableRow>
+                {buttonClickValue.index === index && (
+                  <TableRow className={buttonClickValue.index === index && 'bg-slate-100'}>
+                    <TableCell colSpan={3}>
+                      <div className="max-h-[300px] overflow-auto">
+                        {buttonClickValue.value === 'mapel' && buttonClickValue.index === index && (
+                          <div className="p-2  w-full flex flex-col gap-2 items-center">
+                            <p className="text-lg font-semibold text-center">
+                              Daftar Mata Pelajaran Kelas {kelas.nama}
+                            </p>
+                            <div className="border-l-2 px-3 border-blue-600 w-full">
+                              < Mapel params={params} idKelas={kelas.id} />
+                            </div>
+                          </div>
+                        )}
+                        {buttonClickValue.value === 'siswa' && buttonClickValue.index === index && (
+                          <div className="p-2  w-full flex flex-col gap-2 items-center">
+                            <p className="text-lg font-semibold text-center">
+                              Daftar Siswa Kelas {kelas.nama}
+                            </p>
+                            <div className="border-l-2 px-3 border-blue-600 w-full">
+                              < Siswa idKelas={kelas.id} />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
+            ))
+          )}
 
         </TableBody>
       </Table>

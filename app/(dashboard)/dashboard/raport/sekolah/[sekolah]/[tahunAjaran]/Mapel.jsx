@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useEffect, useRef, useState } from "react";
+import { useEffect,  useState } from "react";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -19,10 +19,12 @@ import { Badge } from "@/components/ui/badge";
 
 import FormCreateMapel from "@/components/dashboard/raport/FormCreateMapel";
 import FormCriteria from "@/components/dashboard/raport/FormCriteria";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 
 
-export default function Mapel({ params: { sekolah } }) {
+export default function Mapel({ params: { sekolah }, idKelas }) {
     const [dialogSiswa, setDialogSiswa] = useState(false);
     const [dialogKriteria, setDialogKriteria] = useState(false);
     const [currentData, setCurrentData] = useState({ id: null, nama: '' });
@@ -58,13 +60,16 @@ export default function Mapel({ params: { sekolah } }) {
         setKriteria(updatedKriteria);
     };
 
+ 
     // Fungsi untuk menambah kriteria baru
     const handleAddKriteria = () => {
         setKriteria([...kriteria, { nama: "", bobot: "", id_mapel: currentData.id, id: null, deleted: false }]); // Tambah kriteria baru
     };
 
     const [totalBobot, setTotalBobot] = useState(0);
-    const [bobotError, setBobotError] = useState("");
+   const url  =  usePathname()
+   const newUrl = url.split('/')
+   
 
 
 
@@ -107,7 +112,7 @@ export default function Mapel({ params: { sekolah } }) {
     const [row, setRow] = useState(10)
     const fetchMapel = async ({ pageParam = null }) => {
         const res = await axios.get('/api/mapel', {
-            params: { id: pageParam, row },
+            params: { id: pageParam, row, kelas: idKelas },
         });
         return res.data;
     };
@@ -117,8 +122,9 @@ export default function Mapel({ params: { sekolah } }) {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
+        isSuccess
     } = useInfiniteQuery({
-        queryKey: [`mapel-${row}`],
+        queryKey: [`mapel-${row}-${idKelas}`],
         queryFn: fetchMapel,
         initialPageParam: 0,
         getNextPageParam: (lastPage, pages) => lastPage.last_id,
@@ -344,16 +350,23 @@ export default function Mapel({ params: { sekolah } }) {
                                 <TableCell>{mapel.kkm}</TableCell>
                                 <TableCell>{new Date(mapel.created_at).toLocaleString()}</TableCell>
                                 <TableCell>
-                                    <div>
+                                    <div className="flex flex-wrap gap-2">
                                         <Badge className={"bg-green-600 cursor-pointer"} onClick={() => {
                                             setDialogKriteria(true);
                                             setCurrentData({ id: mapel.id, nama: mapel.nama })
                                         }}>Kriteria Penilaian</Badge>
+                                        <Link href={`${url}/mapel/${mapel.id}`} target="_blank">
+                                            <Badge className={"bg-blue-600"}>Input Nilai</Badge>
+                                        </Link>
                                     </div>
                                 </TableCell>
                             </TableRow>
                         ))
                     )}
+                    {(isSuccess && data?.length === 0) && (
+                        <p>Tidak ada data mata pelajaran {console.log("tidak ada data mata pelajaran")}</p>
+                    )}
+
                 </TableBody>
             </Table>
             <div ref={ref} style={{ height: 20 }} />

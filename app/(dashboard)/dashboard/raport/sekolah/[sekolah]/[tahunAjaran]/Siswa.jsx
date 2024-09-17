@@ -36,7 +36,7 @@ import { toast } from "sonner";
 
 
 
-export default function Siswa() {
+export default function Siswa({idKelas}) {
   const [dialogSiswa, setDialogSiswa] = useState(false);
   const [formData, setFormData] = useState({
     nisn: '',
@@ -76,7 +76,7 @@ export default function Siswa() {
   const [row, setRow] = useState(10)
   const fetchStudents = async ({ pageParam = null }) => {
     const res = await axios.get('/api/siswa', {
-      params: { id: pageParam, row },
+      params: { id: pageParam, row,kelas:idKelas },
     });
     return res.data;
   };
@@ -87,7 +87,7 @@ export default function Siswa() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [`siswa-${row}`],
+    queryKey: [`siswa-${row}-${idKelas}`],
     queryFn: fetchStudents,
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.last_id,
